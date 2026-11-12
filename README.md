@@ -15,14 +15,7 @@ On Vercel, each visitor's program list is saved in their own browser, and `api/a
 
 ### Email agents (optional)
 
-Two scheduled Claude agents check the owner's inbox every morning and write what they find to a **private** repo (`letters.json`, `emails.json`). The site's **Email** tab and the "Letters received" lines read that through `api/status.js`. To connect it, add these on Vercel:
-
-| Variable | Value |
-|---|---|
-| `GITHUB_TOKEN` | A fine-grained GitHub token with **read-only Contents** access to the data repo only |
-| `DATA_REPO` | `owner/repo` of the data repo (default `zhaoqqiu299/phd-desk-data`) |
-
-Without them the Email tab says the agents aren't connected, and everything else still works.
+Two scheduled Claude agents check the owner's inbox every morning and commit what they find to `docs/data/letters.json` and `docs/data/emails.json` in this repo. The site's **Email** tab and the "Letters received" lines read those files. **They are public**, like the rest of this repo. Each push redeploys the site on Vercel.
 
 ## What you need to run it yourself
 

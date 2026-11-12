@@ -408,11 +408,10 @@ function renderEmail() {
   $("mailCount").hidden = !n; $("mailCount").textContent = n;
 }
 async function loadStatus() {
-  try {
-    const r = await fetch(API_BASE + "/api/status");
-    const d = await r.json();
-    status = d.configured && !d.error ? d : null;
-  } catch { status = null; }
+  // Written daily by the scheduled email agents (docs/data/ in this repo).
+  const get = (f) => fetch(f, { cache: "no-store" }).then((r) => r.ok ? r.json() : null).catch(() => null);
+  const [letters, emails] = await Promise.all([get("data/letters.json"), get("data/emails.json")]);
+  status = letters || emails ? { letters, emails } : null;
   renderEmail();
   if (status) syncLetterCounts();
 }
