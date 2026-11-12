@@ -55,7 +55,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .checks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px }
 .chip { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; color: var(--muted); background: none; cursor: pointer }
 .chip.done { border-color: var(--ok); color: var(--ok) }
-.notes { margin-top: 6px; font-size: 13px; color: var(--muted); overflow-wrap: anywhere }
+.notes { margin-top: 6px; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; white-space: pre-line }
 .pill { font-size: 12px; font-weight: 500; border-radius: 999px; padding: 2px 10px; white-space: nowrap; border: 1px solid currentColor }
 .s-Researching { color: var(--muted) } .s-Drafting { color: var(--warn) } .s-Submitted { color: var(--accent) }
 .s-Interview { color: var(--accent) } .s-Admitted { color: var(--ok) } .s-Rejected { color: var(--bad) }
@@ -96,7 +96,12 @@ form.ask textarea { resize: none; height: 40px }
     <section class="panel">
       <div class="panel-head">
         <h2>Programs</h2>
-        <button class="primary" id="addBtn" type="button">+ Add program</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:end">
+          <button class="link" id="importBtn" type="button" title="Add programs from a .json file exported from this site">Import</button>
+          <button class="link" id="exportBtn" type="button" title="Save your list as a .json backup file">Export</button>
+          <input id="importFile" type="file" accept=".json,application/json" hidden>
+          <button class="primary" id="addBtn" type="button">+ Add program</button>
+        </div>
       </div>
       <div id="formSlot"></div>
       <div class="list" id="list"><div class="empty">Loading your programs…</div></div>
@@ -223,6 +228,44 @@ function showForm(p) {
 }
 
 $("addBtn").onclick = () => showForm(null);
+
+// ---- Import / Export (.json) ----
+function flash(msg) {
+  const el = document.createElement("div"); el.className = "empty"; el.textContent = msg;
+  $("list").before(el); setTimeout(() => el.remove(), 5000);
+}
+$("exportBtn").onclick = () => {
+  const blob = new Blob([JSON.stringify(programs, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "phd-programs.json"; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+$("importBtn").onclick = () => $("importFile").click();
+$("importFile").onchange = async (e) => {
+  const file = e.target.files[0]; e.target.value = "";
+  if (!file) return;
+  let list;
+  try { list = JSON.parse(await file.text()); } catch { return flash("That file isn't valid JSON. Choose a .json file exported from this site."); }
+  if (!Array.isArray(list)) list = list && Array.isArray(list.programs) ? list.programs : null;
+  if (!list) return flash("No programs found in that file.");
+  const key = (p) => (String(p.school || "") + "|" + String(p.program || "")).toLowerCase();
+  const have = new Set(programs.map(key));
+  let added = 0, skipped = 0;
+  list.forEach((p, i) => {
+    if (!p || typeof p !== "object" || !String(p.school || "").trim()) return;
+    if (have.has(key(p))) { skipped++; return; }
+    programs.push({
+      id: "p" + Date.now() + "-" + i,
+      school: String(p.school).trim(), program: String(p.program || ""), deadline: /^\d{4}-\d{2}-\d{2}$/.test(p.deadline || "") ? p.deadline : "",
+      status: STATUSES.includes(p.status) ? p.status : "Researching", fee: Number(p.fee) || 0,
+      portal: String(p.portal || ""), notes: String(p.notes || ""), lors: Math.min(3, Math.max(0, Number(p.lors) || 0)),
+      sop: !!p.sop, cv: !!p.cv, transcripts: !!p.transcripts, scores: !!p.scores,
+    });
+    have.add(key(p)); added++;
+  });
+  persist();
+  flash(`Imported ${added} program${added === 1 ? "" : "s"}` + (skipped ? `, skipped ${skipped} already in your list.` : "."));
+};
 $("list").addEventListener("click", (e) => {
   const t = e.target.closest("button"); if (!t) return;
   const find = (id) => programs.find((p) => p.id === id);
