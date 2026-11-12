@@ -248,11 +248,11 @@ async function load() {
     if (!API_BASE) { // no server (e.g. GitHub Pages): keep everything in this browser
       mode = "local"; programs = localLoad(); render();
       $("askNote").hidden = false;
-      $("askNote").textContent = "Your list is saved in this browser only. The Ask panel needs the server: see the README to connect it.";
+      $("askNote").textContent = "Your program list is saved in this browser.";
     } else $("list").innerHTML = `<div class="empty">Couldn't reach the server. Make sure it is running.</div>`;
   }
 }
-$("pwForm").onsubmit = (e) => { e.preventDefault(); try { localStorage.setItem("phd-pw", $("pwInput").value); } catch {} load(); };
+$("pwForm").onsubmit = (e) => { e.preventDefault(); try { localStorage.setItem("phd-pw", $("pwInput").value); } catch {} $("pwBox").hidden = true; load(); };
 load();
 
 // ---- Ask panel (answers come from Hopscotch via the server) ----
@@ -263,16 +263,17 @@ function addMsg(role, text) {
 }
 async function ask(q) {
   q = q.trim(); if (!q) return;
-  if (mode === "local" && !API_BASE) { addMsg("user", q); addMsg("bot", "Asking questions needs the server, which isn't connected to this site yet. Your list still works and is saved in this browser."); $("askInput").value = ""; return; }
   addMsg("user", q); $("askInput").value = "";
   history.push({ role: "user", content: q });
   const bot = addMsg("bot", "Thinking…"); $("askBtn").disabled = true;
   try {
-    const { answer } = await api("/api/ask", { method: "POST", body: JSON.stringify({ history }) });
+    const { answer } = await api("/api/ask", { method: "POST", body: JSON.stringify(mode === "local" ? { history, programs } : { history }) });
     bot.textContent = answer; history.push({ role: "assistant", content: answer });
   } catch (e) {
     history.pop();
-    bot.textContent = e.code === "wrong_password" ? "Enter the site password first (bottom right)." : "Couldn't get an answer: " + (typeof e.code === "string" ? e.code : "server error") + " Try again.";
+    bot.textContent = e.code === "wrong_password" ? "Enter the site password first (bottom right), then ask again."
+      : e.code === 404 || e.code === "no_server" ? "Asking questions isn't connected on this site yet. Your list still works and is saved in this browser."
+      : "Couldn't get an answer: " + (typeof e.code === "string" ? e.code : "server error") + " Try again.";
   } finally { $("askBtn").disabled = false; $("msgs").scrollTop = $("msgs").scrollHeight; }
 }
 $("askForm").onsubmit = (e) => { e.preventDefault(); ask($("askInput").value); };

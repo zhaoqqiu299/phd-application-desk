@@ -4,7 +4,16 @@ A small website for tracking PhD applications (programs, deadlines, documents, r
 
 Your API key stays on the server. The browser never sees it.
 
-## What you need
+## Deploy on Vercel (recommended)
+
+1. Go to https://vercel.com/new and sign in with GitHub.
+2. Import the `phd-application-desk` repository. Leave the framework preset as **Other** and the other settings as they are (`vercel.json` already sets them).
+3. Under **Environment Variables**, add `HOPSCOTCH_API_KEY` (your key). Optionally add `APP_PASSWORD` and `MODEL`.
+4. Click **Deploy**. Your site will be at `https://<project-name>.vercel.app`.
+
+On Vercel, each visitor's program list is saved in their own browser, and `api/ask.js` answers questions using that list. If you set `APP_PASSWORD`, visitors must enter it before asking; without it, anyone with the link can ask questions on your API credit.
+
+## What you need to run it yourself
 
 - Node.js 18 or newer (no `npm install` needed: there are no dependencies)
 - Your Hopscotch Labs API key
@@ -12,7 +21,7 @@ Your API key stays on the server. The browser never sees it.
 ## Run it on your computer
 
 ```bash
-cd phd-desk
+cd phd-application-desk
 export HOPSCOTCH_API_KEY="your-hopscotch-key"
 export APP_PASSWORD="choose-a-password"
 npm start
@@ -55,5 +64,8 @@ The server itself needs a host that runs Node: static hosts like GitHub Pages ca
 
 ## Files
 
-- `server.mjs`: serves the page, saves your list, and forwards questions to Hopscotch
+- `api/ask.js`: the Vercel function that answers questions
+- `lib/advisor.mjs`: the prompt and Hopscotch call, shared by both setups
+- `vercel.json`: tells Vercel to serve `docs/` with no build step
+- `server.mjs`: the all-in-one server for other Node hosts (also saves your list to `data.json`)
 - `docs/index.html`: the website (GitHub Pages serves this folder)
