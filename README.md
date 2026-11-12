@@ -51,7 +51,7 @@ Any host that runs Node works (Render, Railway, Fly.io, a VPS). On the host:
 3. Add `HOPSCOTCH_API_KEY` and `APP_PASSWORD` in the host's environment-variable settings. Never commit the key to the repo.
 4. Your list is saved in `data.json`. On hosts with a temporary disk (for example Render's free plan) it is lost on restart. Attach a persistent disk and point `DATA_FILE` to it.
 
-Static-only hosts like GitHub Pages or Netlify (without functions) **won't work**, because they can't keep the key secret.
+The server itself needs a host that runs Node: static hosts like GitHub Pages can't keep the key secret.
 
 ## Files
 
