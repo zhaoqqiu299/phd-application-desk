@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PhD Application Desk</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
+<style>
+/* Layout: a working desk — summary strip, then program ledger (left) beside an advisor chat (right); stacks on phones. */
+:root {
+  --bg: #f3f5f8; --surface: #ffffff; --fg: #18202e; --muted: #5d6779; --line: #dde2ea;
+  --accent: #1f4fa3; --accent-soft: #e5ecf8;
+  --ok: #1d7a4a; --warn: #b26a00; --bad: #b3261e;
+  --display: "Newsreader", Georgia, serif;
+  --sans: "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11151c; --surface: #1a2029; --fg: #e6eaf1; --muted: #98a2b3; --line: #2b3340;
+  --accent: #7aa5ff; --accent-soft: #1f2b44; --ok: #5cc98d; --warn: #f0b154; --bad: #ff8a80; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11151c; --surface: #1a2029; --fg: #e6eaf1; --muted: #98a2b3; --line: #2b3340;
+  --accent: #7aa5ff; --accent-soft: #1f2b44; --ok: #5cc98d; --warn: #f0b154; --bad: #ff8a80; color-scheme: dark }
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 14px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 40px }
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 20px }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px }
+h1 { font-family: var(--display); font-weight: 600; font-size: 30px; margin: 0; text-wrap: balance }
+.sub { color: var(--muted); margin: 2px 0 0 }
+.stats { display: flex; flex-wrap: wrap; gap: 8px }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; min-width: 110px }
+.stat b { display: block; font-family: var(--mono); font-size: 18px; font-weight: 500; font-variant-numeric: tabular-nums }
+.stat span { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted) }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 20px; align-items: start }
+@media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr) } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; min-width: 0 }
+.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line) }
+.panel-head h2 { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 0 }
+button { font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); padding: 6px 12px }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 500 }
+button.link { border: 0; background: none; color: var(--muted); padding: 2px 6px }
+button.link:hover { color: var(--fg) }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.list { display: grid }
+.row { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--line); align-items: start }
+.row:last-child { border-bottom: 0 }
+.due { font-family: var(--mono); text-align: center; border-radius: 6px; padding: 6px 4px; background: var(--accent-soft) }
+.due b { display: block; font-size: 20px; font-weight: 500; line-height: 1.1; font-variant-numeric: tabular-nums }
+.due small { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted) }
+.due.soon b { color: var(--warn) } .due.past b { color: var(--muted) }
+.name { font-weight: 600; font-size: 15px }
+.meta { color: var(--muted); font-size: 13px }
+.checks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px }
+.chip { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; color: var(--muted); background: none; cursor: pointer }
+.chip.done { border-color: var(--ok); color: var(--ok) }
+.notes { margin-top: 6px; font-size: 13px; color: var(--muted); overflow-wrap: anywhere }
+.pill { font-size: 12px; font-weight: 500; border-radius: 999px; padding: 2px 10px; white-space: nowrap; border: 1px solid currentColor }
+.s-Researching { color: var(--muted) } .s-Drafting { color: var(--warn) } .s-Submitted { color: var(--accent) }
+.s-Interview { color: var(--accent) } .s-Admitted { color: var(--ok) } .s-Rejected { color: var(--bad) }
+.side { display: flex; flex-direction: column; align-items: end; gap: 6px }
+.empty { padding: 32px 16px; color: var(--muted); text-align: center }
+.example { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--warn) }
+form.edit { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; padding: 16px; border-bottom: 1px solid var(--line); background: var(--accent-soft) }
+form.edit label { display: grid; gap: 3px; font-size: 12px; color: var(--muted) }
+form.edit .wide { grid-column: 1 / -1 }
+input, select, textarea { font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; width: 100% }
+.actions { display: flex; gap: 8px; justify-content: end; grid-column: 1 / -1 }
+.chat { display: flex; flex-direction: column; height: min(640px, 80vh) }
+.msgs { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px }
+.msg { max-width: 92%; padding: 8px 12px; border-radius: 10px; white-space: pre-wrap; overflow-wrap: anywhere }
+.msg.user { align-self: end; background: var(--accent); color: var(--surface) }
+.msg.bot { align-self: start; background: var(--accent-soft) }
+.sugg { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px }
+.sugg button { font-size: 12px; padding: 3px 10px; border-radius: 999px; color: var(--muted) }
+form.ask { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line) }
+form.ask textarea { resize: none; height: 40px }
+.note { font-size: 12px; color: var(--muted); padding: 0 16px 10px }
+@media (max-width: 520px) { .row { grid-template-columns: 60px minmax(0, 1fr) } .side { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; align-items: center } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>PhD Application Desk</h1>
+      <p class="sub">Track every program, deadline and document. Ask questions about your list on the right.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <div class="main">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Programs</h2>
+        <button class="primary" id="addBtn" type="button">+ Add program</button>
+      </div>
+      <div id="formSlot"></div>
+      <div class="list" id="list"><div class="empty">Loading your programs…</div></div>
+    </section>
+
+    <section class="panel chat">
+      <div class="panel-head"><h2>Ask</h2><button class="link" id="clearChat" type="button">Clear</button></div>
+      <div class="msgs" id="msgs">
+        <div class="msg bot">Hi! I can see your program list. Ask me what's due next, how to prioritize, or for help with your statement of purpose or emails to professors.</div>
+      </div>
+      <div class="sugg" id="sugg">
+        <button type="button">What should I work on this week?</button>
+        <button type="button">Which programs are still missing letters?</button>
+        <button type="button">Draft an email to a potential advisor</button>
+      </div>
+      <p class="note" id="askNote" hidden></p>
+      <form class="ask" id="askForm">
+        <textarea id="askInput" placeholder="Ask anything about your applications…" aria-label="Your question"></textarea>
+        <button class="primary" type="submit" id="askBtn">Send</button>
+      </form>
+    </section>
+  </div>
+</div>
+
+<div class="panel" id="pwBox" hidden style="position:fixed;inset:auto 16px 16px auto;padding:16px;max-width:320px;display:grid;gap:8px">
+  <b>Enter the site password</b>
+  <form id="pwForm" style="display:flex;gap:8px"><input id="pwInput" type="password" aria-label="Password"><button class="primary" type="submit">Unlock</button></form>
+</div>
+<script>
+const STATUSES = ["Researching", "Drafting", "Submitted", "Interview", "Admitted", "Rejected"];
+const DOCS = [["sop", "SOP"], ["cv", "CV"], ["transcripts", "Transcripts"], ["scores", "Test scores"]];
+let programs = [];
+let editingId = null;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// Where the Ask server lives. Leave "" when this page is served by server.mjs itself.
+// On GitHub Pages, set it to your deployed server, e.g. "https://phd-desk.onrender.com".
+const API_BASE = "";
+let mode = "server"; // "server" or "local" (browser-only, e.g. GitHub Pages)
+const getPw = () => { try { return localStorage.getItem("phd-pw") || ""; } catch { return ""; } };
+
+async function api(path, opts = {}) {
+  const r = await fetch(API_BASE + path, { ...opts, headers: { "Content-Type": "application/json", "x-app-password": getPw(), ...(opts.headers || {}) } });
+  if (r.status === 401) { $("pwBox").hidden = false; throw { code: "wrong_password" }; }
+  const data = await r.json().catch(() => { throw { code: "no_server" }; });
+  if (!r.ok) throw { code: data.error || r.status };
+  return data;
+}
+const localLoad = () => { try { return JSON.parse(localStorage.getItem("phd-programs")) || []; } catch { return []; } };
+const localSave = () => { try { localStorage.setItem("phd-programs", JSON.stringify(programs)); } catch {} };
+
+function daysLeft(d) {
+  if (!d) return null;
+  return Math.ceil((new Date(d + "T23:59:00") - new Date()) / 86400000);
+}
+
+function render() {
+  const sorted = [...programs].sort((a, b) => (a.deadline || "9999").localeCompare(b.deadline || "9999"));
+  const done = ["Submitted", "Interview", "Admitted", "Rejected"];
+  const next = sorted.find((p) => (daysLeft(p.deadline) ?? -1) >= 0 && !done.includes(p.status));
+  const fees = programs.reduce((s, p) => s + (Number(p.fee) || 0), 0);
+  $("stats").innerHTML = [
+    [programs.length, "Programs"],
+    [programs.filter((p) => !done.includes(p.status)).length, "In progress"],
+    [programs.filter((p) => done.includes(p.status)).length, "Submitted"],
+    [next ? daysLeft(next.deadline) + "d" : "—", "Next deadline"],
+    ["$" + fees, "Fees"],
+  ].map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${l}</span></div>`).join("");
+
+  if (!programs.length) {
+    $("list").innerHTML = `<div class="empty">No programs yet. Click <b>+ Add program</b> to add your first school.</div>`;
+    return;
+  }
+  $("list").innerHTML = sorted.map((p) => {
+    const d = daysLeft(p.deadline);
+    const cls = d == null ? "" : d < 0 ? "past" : d <= 14 ? "soon" : "";
+    const dateStr = p.deadline ? new Date(p.deadline + "T12:00").toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "No date";
+    const chips = DOCS.map(([k, l]) => `<button type="button" class="chip ${p[k] ? "done" : ""}" data-toggle="${k}" data-id="${p.id}">${p[k] ? "✓ " : ""}${l}</button>`).join("")
+      + `<button type="button" class="chip ${(p.lors || 0) >= 3 ? "done" : ""}" data-lor="${p.id}">Letters ${p.lors || 0}/3</button>`;
+    const portal = /^https?:\/\//.test(p.portal || "") ? ` · <a href="${esc(p.portal)}" target="_blank" rel="noopener">portal</a>` : "";
+    return `<div class="row">
+      <div class="due ${cls}"><b>${d == null ? "—" : d < 0 ? "past" : d}</b><small>${d != null && d >= 0 ? "days · " : ""}${esc(dateStr)}</small></div>
+      <div style="min-width:0">
+        <div class="name">${esc(p.school)}</div>
+        <div class="meta">${esc(p.program)}${p.fee ? " · $" + esc(p.fee) + " fee" : ""}${portal}</div>
+        <div class="checks">${chips}</div>
+        ${p.notes ? `<div class="notes">${esc(p.notes)}</div>` : ""}
+      </div>
+      <div class="side">
+        <span class="pill s-${esc(p.status)}">${esc(p.status)}</span>
+        <div><button class="link" type="button" data-edit="${p.id}">Edit</button><button class="link" type="button" data-del="${p.id}">Delete</button></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+async function persist() {
+  render();
+  if (mode === "local") return localSave();
+  try { await api("/api/programs", { method: "PUT", body: JSON.stringify(programs) }); }
+  catch (e) { if (e.code !== "wrong_password") $("list").insertAdjacentHTML("afterbegin", `<div class="empty">Couldn't save to the server. Check that it is running, then try again.</div>`); }
+}
+
+function showForm(p) {
+  editingId = p ? p.id : null;
+  p = p || { status: "Researching", lors: 0 };
+  $("formSlot").innerHTML = `<form class="edit" id="editForm">
+    <label>School<input id="f-school" required value="${esc(p.school)}"></label>
+    <label>Program<input id="f-program" value="${esc(p.program)}" placeholder="PhD, ..."></label>
+    <label>Deadline<input id="f-deadline" type="date" value="${esc(p.deadline)}"></label>
+    <label>Status<select id="f-status">${STATUSES.map((s) => `<option ${s === p.status ? "selected" : ""}>${s}</option>`).join("")}</select></label>
+    <label>Application fee ($)<input id="f-fee" type="number" min="0" value="${esc(p.fee)}"></label>
+    <label>Portal link<input id="f-portal" type="url" value="${esc(p.portal)}" placeholder="https://"></label>
+    <label class="wide">Notes (advisors, requirements, thoughts)<textarea id="f-notes" rows="2">${esc(p.notes)}</textarea></label>
+    <div class="actions"><button type="button" id="cancelEdit">Cancel</button><button class="primary" type="submit">${editingId ? "Save changes" : "Add program"}</button></div>
+  </form>`;
+  $("f-school").focus();
+  $("cancelEdit").onclick = () => { $("formSlot").innerHTML = ""; editingId = null; };
+  $("editForm").onsubmit = (e) => {
+    e.preventDefault();
+    const data = {
+      school: $("f-school").value.trim(), program: $("f-program").value.trim(), deadline: $("f-deadline").value,
+      status: $("f-status").value, fee: Number($("f-fee").value) || 0, portal: $("f-portal").value.trim(), notes: $("f-notes").value.trim(),
+    };
+    if (editingId) Object.assign(programs.find((x) => x.id === editingId), data);
+    else programs.push({ ...data, lors: 0, id: "p" + Date.now() });
+    $("formSlot").innerHTML = ""; editingId = null;
+    persist();
+  };
+}
+
+$("addBtn").onclick = () => showForm(null);
+$("list").addEventListener("click", (e) => {
+  const t = e.target.closest("button"); if (!t) return;
+  const find = (id) => programs.find((p) => p.id === id);
+  if (t.dataset.toggle) { const p = find(t.dataset.id); p[t.dataset.toggle] = !p[t.dataset.toggle]; persist(); }
+  else if (t.dataset.lor) { const p = find(t.dataset.lor); p.lors = ((p.lors || 0) + 1) % 4; persist(); }
+  else if (t.dataset.edit) showForm(find(t.dataset.edit));
+  else if (t.dataset.del) {
+    if (t.dataset.confirm) { programs = programs.filter((p) => p.id !== t.dataset.del); persist(); }
+    else { t.dataset.confirm = "1"; t.textContent = "Confirm delete"; t.style.color = "var(--bad)"; setTimeout(() => { if (t.isConnected) { delete t.dataset.confirm; t.textContent = "Delete"; t.style.color = ""; } }, 3000); }
+  }
+});
+
+async function load() {
+  try { programs = await api("/api/programs"); mode = "server"; $("pwBox").hidden = true; render(); }
+  catch (e) {
+    if (e.code === "wrong_password") return;
+    if (!API_BASE) { // no server (e.g. GitHub Pages): keep everything in this browser
+      mode = "local"; programs = localLoad(); render();
+      $("askNote").hidden = false;
+      $("askNote").textContent = "Your list is saved in this browser only. The Ask panel needs the server: see the README to connect it.";
+    } else $("list").innerHTML = `<div class="empty">Couldn't reach the server. Make sure it is running.</div>`;
+  }
+}
+$("pwForm").onsubmit = (e) => { e.preventDefault(); try { localStorage.setItem("phd-pw", $("pwInput").value); } catch {} load(); };
+load();
+
+// ---- Ask panel (answers come from Hopscotch via the server) ----
+let history = [];
+function addMsg(role, text) {
+  const el = document.createElement("div"); el.className = "msg " + (role === "user" ? "user" : "bot"); el.textContent = text;
+  $("msgs").appendChild(el); $("msgs").scrollTop = $("msgs").scrollHeight; return el;
+}
+async function ask(q) {
+  q = q.trim(); if (!q) return;
+  if (mode === "local" && !API_BASE) { addMsg("user", q); addMsg("bot", "Asking questions needs the server, which isn't connected to this site yet. Your list still works and is saved in this browser."); $("askInput").value = ""; return; }
+  addMsg("user", q); $("askInput").value = "";
+  history.push({ role: "user", content: q });
+  const bot = addMsg("bot", "Thinking…"); $("askBtn").disabled = true;
+  try {
+    const { answer } = await api("/api/ask", { method: "POST", body: JSON.stringify({ history }) });
+    bot.textContent = answer; history.push({ role: "assistant", content: answer });
+  } catch (e) {
+    history.pop();
+    bot.textContent = e.code === "wrong_password" ? "Enter the site password first (bottom right)." : "Couldn't get an answer: " + (typeof e.code === "string" ? e.code : "server error") + " Try again.";
+  } finally { $("askBtn").disabled = false; $("msgs").scrollTop = $("msgs").scrollHeight; }
+}
+$("askForm").onsubmit = (e) => { e.preventDefault(); ask($("askInput").value); };
+$("askInput").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask($("askInput").value); } });
+$("sugg").addEventListener("click", (e) => { if (e.target.tagName === "BUTTON") ask(e.target.textContent); });
+$("clearChat").onclick = () => { history = []; $("msgs").innerHTML = '<div class="msg bot">Cleared. What would you like to know?</div>'; };
+</script>
+</body>
+</html>
