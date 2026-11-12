@@ -3,8 +3,6 @@ import { answer } from "../lib/advisor.mjs";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "method_not_allowed" });
-  const pw = process.env.APP_PASSWORD || "";
-  if (pw && req.headers["x-app-password"] !== pw) return res.status(401).json({ error: "wrong_password" });
   let body = req.body || {};
   if (typeof body === "string") { try { body = JSON.parse(body || "{}"); } catch { return res.status(400).json({ error: "bad_json" }); } }
   const { status, body: out } = await answer({ programs: body.programs, history: body.history });

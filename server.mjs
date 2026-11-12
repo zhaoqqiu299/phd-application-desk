@@ -9,12 +9,10 @@ import { answer } from "./lib/advisor.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
-const PASSWORD = process.env.APP_PASSWORD || ""; // set this if the site is public
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || ""; // e.g. https://zhaoqqiu299.github.io
 const DATA_FILE =process.env.DATA_FILE || path.join(here, "data.json");
 
 if (!process.env.HOPSCOTCH_API_KEY) console.warn("Warning: HOPSCOTCH_API_KEY is not set. The Ask panel will not work.");
-if (!PASSWORD) console.warn("Warning: APP_PASSWORD is not set. Anyone who can reach this server can use your API key.");
 
 const send = (res, status, body, type = "application/json") => {
   res.writeHead(status, { "Content-Type": type, "Cache-Control": "no-store" });
@@ -36,14 +34,12 @@ const server = http.createServer(async (req, res) => {
   // Let a separately hosted page (e.g. GitHub Pages) call this server.
   if (ALLOWED_ORIGIN && req.headers.origin === ALLOWED_ORIGIN) {
     res.setHeader("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
-    res.setHeader("Access-Control-Allow-Headers", "content-type, x-app-password");
+    res.setHeader("Access-Control-Allow-Headers", "content-type");
     res.setHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS");
     if (req.method === "OPTIONS") { res.writeHead(204); return res.end(); }
   }
   try {
     if (url.pathname.startsWith("/api/")) {
-      if (PASSWORD && req.headers["x-app-password"] !== PASSWORD) return send(res, 401, { error: "wrong_password" });
-
       if (url.pathname === "/api/programs" && req.method === "GET") return send(res, 200, await loadPrograms());
 
       if (url.pathname === "/api/programs" && req.method === "PUT") {

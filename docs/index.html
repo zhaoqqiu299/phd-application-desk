@@ -121,10 +121,6 @@ form.ask textarea { resize: none; height: 40px }
   </div>
 </div>
 
-<div class="panel" id="pwBox" hidden style="position:fixed;inset:auto 16px 16px auto;padding:16px;max-width:320px;display:grid;gap:8px">
-  <b>Enter the site password</b>
-  <form id="pwForm" style="display:flex;gap:8px"><input id="pwInput" type="password" aria-label="Password"><button class="primary" type="submit">Unlock</button></form>
-</div>
 <script>
 const STATUSES = ["Researching", "Drafting", "Submitted", "Interview", "Admitted", "Rejected"];
 const DOCS = [["sop", "SOP"], ["cv", "CV"], ["transcripts", "Transcripts"], ["scores", "Test scores"]];
@@ -136,11 +132,9 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 // On GitHub Pages, set it to your deployed server, e.g. "https://phd-desk.onrender.com".
 const API_BASE = "";
 let mode = "server"; // "server" or "local" (browser-only, e.g. GitHub Pages)
-const getPw = () => { try { return localStorage.getItem("phd-pw") || ""; } catch { return ""; } };
 
 async function api(path, opts = {}) {
-  const r = await fetch(API_BASE + path, { ...opts, headers: { "Content-Type": "application/json", "x-app-password": getPw(), ...(opts.headers || {}) } });
-  if (r.status === 401) { $("pwBox").hidden = false; throw { code: "wrong_password" }; }
+  const r = await fetch(API_BASE + path, { ...opts, headers: { "Content-Type": "application/json", ...(opts.headers || {}) } });
   const data = await r.json().catch(() => { throw { code: "no_server" }; });
   if (!r.ok) throw { code: data.error || r.status };
   return data;
@@ -197,7 +191,7 @@ async function persist() {
   render();
   if (mode === "local") return localSave();
   try { await api("/api/programs", { method: "PUT", body: JSON.stringify(programs) }); }
-  catch (e) { if (e.code !== "wrong_password") $("list").insertAdjacentHTML("afterbegin", `<div class="empty">Couldn't save to the server. Check that it is running, then try again.</div>`); }
+  catch { $("list").insertAdjacentHTML("afterbegin", `<div class="empty">Couldn't save to the server. Check that it is running, then try again.</div>`); }
 }
 
 function showForm(p) {
@@ -242,9 +236,8 @@ $("list").addEventListener("click", (e) => {
 });
 
 async function load() {
-  try { programs = await api("/api/programs"); mode = "server"; $("pwBox").hidden = true; render(); }
-  catch (e) {
-    if (e.code === "wrong_password") return;
+  try { programs = await api("/api/programs"); mode = "server"; render(); }
+  catch {
     if (!API_BASE) { // no server (e.g. GitHub Pages): keep everything in this browser
       mode = "local"; programs = localLoad(); render();
       $("askNote").hidden = false;
@@ -252,7 +245,6 @@ async function load() {
     } else $("list").innerHTML = `<div class="empty">Couldn't reach the server. Make sure it is running.</div>`;
   }
 }
-$("pwForm").onsubmit = (e) => { e.preventDefault(); try { localStorage.setItem("phd-pw", $("pwInput").value); } catch {} $("pwBox").hidden = true; load(); };
 load();
 
 // ---- Ask panel (answers come from Hopscotch via the server) ----
@@ -271,8 +263,7 @@ async function ask(q) {
     bot.textContent = answer; history.push({ role: "assistant", content: answer });
   } catch (e) {
     history.pop();
-    bot.textContent = e.code === "wrong_password" ? "Enter the site password first (bottom right), then ask again."
-      : e.code === 404 || e.code === "no_server" ? "Asking questions isn't connected on this site yet. Your list still works and is saved in this browser."
+    bot.textContent = e.code === 404 || e.code === "no_server" ? "Asking questions isn't connected on this site yet. Your list still works and is saved in this browser."
       : "Couldn't get an answer: " + (typeof e.code === "string" ? e.code : "server error") + " Try again.";
   } finally { $("askBtn").disabled = false; $("msgs").scrollTop = $("msgs").scrollHeight; }
 }
