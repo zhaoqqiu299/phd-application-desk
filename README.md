@@ -13,6 +13,17 @@ Your API key stays on the server. The browser never sees it.
 
 On Vercel, each visitor's program list is saved in their own browser, and `api/ask.js` answers questions using that list. There is no password: anyone with the link can ask questions, and each question uses your Hopscotch credit.
 
+### Email agents (optional)
+
+Two scheduled Claude agents check the owner's inbox every morning and write what they find to a **private** repo (`letters.json`, `emails.json`). The site's **Email** tab and the "Letters received" lines read that through `api/status.js`. To connect it, add these on Vercel:
+
+| Variable | Value |
+|---|---|
+| `GITHUB_TOKEN` | A fine-grained GitHub token with **read-only Contents** access to the data repo only |
+| `DATA_REPO` | `owner/repo` of the data repo (default `zhaoqqiu299/phd-desk-data`) |
+
+Without them the Email tab says the agents aren't connected, and everything else still works.
+
 ## What you need to run it yourself
 
 - Node.js 18 or newer (no `npm install` needed: there are no dependencies)

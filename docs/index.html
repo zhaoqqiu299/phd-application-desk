@@ -78,6 +78,24 @@ form.ask { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid va
 form.ask textarea { resize: none; height: 40px }
 .note { font-size: 12px; color: var(--muted); padding: 0 16px 10px }
 @media (max-width: 520px) { .row { grid-template-columns: 60px minmax(0, 1fr) } .side { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; align-items: center } }
+a { color: var(--accent) }
+nav.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line) }
+nav.tabs a { padding: 8px 14px; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500 }
+nav.tabs a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--accent) }
+nav.tabs .count { font-family: var(--mono); font-size: 11px; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 0 7px; margin-left: 4px }
+.recv { margin-top: 6px; font-size: 13px; color: var(--ok) }
+.mail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 20px; align-items: start }
+.mail { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 16px; border-bottom: 1px solid var(--line) }
+.mail:last-child { border-bottom: 0 }
+.mail .who { font-weight: 600 } .mail .subj { grid-column: 1 / -1; overflow-wrap: anywhere }
+.mail .why { grid-column: 1 / -1; font-size: 13px; color: var(--muted) }
+.mail .age { font-family: var(--mono); font-size: 12px; color: var(--warn); white-space: nowrap; text-align: right }
+.mail a.open { font-size: 13px }
+.updated { font-size: 12px; color: var(--muted); padding: 8px 16px; border-top: 1px solid var(--line) }
+.letters-table { width: 100%; border-collapse: collapse; font-size: 13px }
+.letters-table td, .letters-table th { text-align: left; padding: 8px 16px; border-bottom: 1px solid var(--line); vertical-align: top }
+.letters-table th { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 500 }
+.letters-table td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important } }
 </style>
 </head>
@@ -92,7 +110,32 @@ form.ask textarea { resize: none; height: 40px }
     <div class="stats" id="stats"></div>
   </header>
 
-  <div class="main">
+  <nav class="tabs" aria-label="Pages">
+    <a href="#programs" id="tab-programs">Programs</a>
+    <a href="#email" id="tab-email">Email<span class="count" id="mailCount" hidden></span></a>
+  </nav>
+
+  <div id="view-email" hidden>
+    <div class="mail-grid">
+      <section class="panel">
+        <div class="panel-head"><h2>Waiting on a reply</h2></div>
+        <p class="note" style="padding-top:10px">Emails you sent to professors or admissions offices with no reply after 7+ days.</p>
+        <div id="awaiting"><div class="empty">Loading…</div></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>You haven't replied</h2></div>
+        <p class="note" style="padding-top:10px">Important emails from professors or admissions offices that still need your answer.</p>
+        <div id="needsReply"><div class="empty">Loading…</div></div>
+      </section>
+    </div>
+    <section class="panel" style="margin-top:20px">
+      <div class="panel-head"><h2>Recommendation letters received</h2></div>
+      <div style="overflow-x:auto" id="lettersBox"><div class="empty">Loading…</div></div>
+      <div class="updated" id="statusUpdated"></div>
+    </section>
+  </div>
+
+  <div class="main" id="view-programs">
     <section class="panel">
       <div class="panel-head">
         <h2>Programs</h2>
@@ -182,6 +225,7 @@ function render() {
         <div class="name">${esc(p.school)}</div>
         <div class="meta">${esc(p.program)}${p.fee ? " · $" + esc(p.fee) + " fee" : ""}${portal}</div>
         <div class="checks">${chips}</div>
+        ${recvLine(p)}
         ${p.notes ? `<div class="notes">${esc(p.notes)}</div>` : ""}
       </div>
       <div class="side">
@@ -193,6 +237,7 @@ function render() {
 }
 
 async function persist() {
+  if (typeof applyLetterCounts === "function") applyLetterCounts();
   render();
   if (mode === "local") return localSave();
   try { await api("/api/programs", { method: "PUT", body: JSON.stringify(programs) }); }
@@ -283,6 +328,7 @@ async function load() {
   catch {
     if (!API_BASE) { // no server (e.g. GitHub Pages): keep everything in this browser
       mode = "local"; programs = localLoad(); render();
+      if (status) syncLetterCounts(); // agent data may arrive before the list does
       $("askNote").hidden = false;
       $("askNote").textContent = "Your program list is saved in this browser.";
     } else $("list").innerHTML = `<div class="empty">Couldn't reach the server. Make sure it is running.</div>`;
@@ -313,7 +359,75 @@ async function ask(q) {
 $("askForm").onsubmit = (e) => { e.preventDefault(); ask($("askInput").value); };
 $("askInput").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask($("askInput").value); } });
 $("sugg").addEventListener("click", (e) => { if (e.target.tagName === "BUTTON") ask(e.target.textContent); });
-$("clearChat").onclick = () => { history = []; $("msgs").innerHTML = '<div class="msg bot">Cleared. What would you like to know?</div>'; };
+// ---- Agent data: letters received + email follow-ups (written daily by scheduled agents) ----
+let status = null; // { letters: {updated, schools: {name: [{recommender, date}]}}, emails: {updated, awaitingReply, needsReply} }
+const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+function lettersFor(p) {
+  const schools = status?.letters?.schools || {};
+  const n = norm(p.school);
+  const key = Object.keys(schools).find((k) => norm(k) === n) || Object.keys(schools).find((k) => n && (norm(k).includes(n) || n.includes(norm(k))));
+  return key ? schools[key] : [];
+}
+const fmtDate = (d) => d ? new Date(d + (d.length === 10 ? "T12:00" : "")).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
+function recvLine(p) {
+  const got = lettersFor(p);
+  if (!got.length) return "";
+  return `<div class="recv">✓ Letters received: ${got.map((l) => `${esc(l.recommender)}${l.date ? " (" + esc(fmtDate(l.date)) + ")" : ""}`).join(", ")}</div>`;
+}
+// Raise each program's letter count to what the agent saw (never lowers a count you set yourself).
+function applyLetterCounts() {
+  let changed = false;
+  programs.forEach((p) => { const n = Math.min(3, lettersFor(p).length); if (n > (p.lors || 0)) { p.lors = n; changed = true; } });
+  return changed;
+}
+function syncLetterCounts() { if (applyLetterCounts()) persist(); else render(); }
+const outlook = (u) => /^https:\/\/outlook\.(office365|office)\.com\//.test(u || "") ? `<a class="open" href="${esc(u)}" target="_blank" rel="noopener">Open in Outlook</a>` : "";
+function mailRows(list, kind) {
+  if (!list?.length) return `<div class="empty">${kind === "awaiting" ? "Nobody has kept you waiting a week. 🎉" : "You're all caught up."}</div>`;
+  return list.map((m) => `<div class="mail">
+    <span class="who">${esc(m.name || m.email)}</span>
+    <span class="age">${esc(m.days)}d ${kind === "awaiting" ? "waiting" : "ago"}</span>
+    <span class="subj">${esc(m.subject)}</span>
+    ${m.why ? `<span class="why">${esc(m.why)}</span>` : ""}
+    <span class="why">${esc(m.email || "")} · ${esc(fmtDate(m.date))} ${outlook(m.webLink)}</span>
+  </div>`).join("");
+}
+function renderEmail() {
+  if (!status) { ["awaiting", "needsReply", "lettersBox"].forEach((id) => $(id).innerHTML = `<div class="empty">The email agents haven't been connected to this site yet.</div>`); return; }
+  const em = status.emails || {};
+  $("awaiting").innerHTML = mailRows(em.awaitingReply, "awaiting");
+  $("needsReply").innerHTML = mailRows(em.needsReply, "needs");
+  const schools = status.letters?.schools || {};
+  const names = Object.keys(schools);
+  $("lettersBox").innerHTML = names.length ? `<table class="letters-table"><thead><tr><th>School</th><th>Count</th><th>From</th></tr></thead><tbody>${
+    names.map((s) => `<tr><td>${esc(s)}</td><td class="n">${schools[s].length}</td><td>${schools[s].map((l) => `${esc(l.recommender)}${l.date ? " · " + esc(fmtDate(l.date)) : ""}`).join("<br>")}</td></tr>`).join("")
+  }</tbody></table>` : `<div class="empty">No confirmation emails found yet.</div>`;
+  const ts = [status.letters?.updated, em.updated].filter(Boolean).sort().pop();
+  $("statusUpdated").textContent = ts ? "Last checked by the email agents: " + new Date(ts).toLocaleString() : "";
+  const n = (em.awaitingReply?.length || 0) + (em.needsReply?.length || 0);
+  $("mailCount").hidden = !n; $("mailCount").textContent = n;
+}
+async function loadStatus() {
+  try {
+    const r = await fetch(API_BASE + "/api/status");
+    const d = await r.json();
+    status = d.configured && !d.error ? d : null;
+  } catch { status = null; }
+  renderEmail();
+  if (status) syncLetterCounts();
+}
+
+function route() {
+  const email = location.hash === "#email";
+  $("view-email").hidden = !email; $("view-programs").hidden = email;
+  $("tab-email").setAttribute("aria-current", email ? "page" : "false");
+  $("tab-programs").setAttribute("aria-current", email ? "false" : "page");
+}
+window.addEventListener("hashchange", route);
+route();
+loadStatus();
+
+$("clearChat").onclick =() => { history = []; $("msgs").innerHTML = '<div class="msg bot">Cleared. What would you like to know?</div>'; };
 </script>
 </body>
 </html>
