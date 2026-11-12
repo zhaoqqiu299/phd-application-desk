@@ -1,5 +1,49 @@
 {
-  "updated": null,
-  "awaitingReply": [],
-  "needsReply": []
+  "updated": "2026-11-12T07:00:00Z",
+  "awaitingReply": [
+    {
+      "name": "Ben James (University of Delaware)",
+      "email": "benjames@udel.edu",
+      "subject": "Prospective PhD Student – Multilingual Learners and Teacher Noticing",
+      "date": "2026-11-02",
+      "days": 10,
+      "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADNlZTYxMjMwLTRmN2ItNGRjMC05MTE0LTY2YzQyZjczMDc1ZABGAAAAAACaUSYRLnTqRKTjNn7964aiBwB6tPAeoFTnSouRXVsb12E3AAAAAAEJAAB6tPAeoFTnSouRXVsb12E3AACGEj88AAA%3D&exvsurl=1&viewmodel=ReadMessageItem"
+    },
+    {
+      "name": "Xavier Ochoa (NYU)",
+      "email": "xavier.ochoa@nyu.edu",
+      "subject": "Prospective PhD Student – Learning Analytics and AI-Supported Feedback",
+      "date": "2026-11-03",
+      "days": 9,
+      "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADNlZTYxMjMwLTRmN2ItNGRjMC05MTE0LTY2YzQyZjczMDc1ZABGAAAAAACaUSYRLnTqRKTjNn7964aiBwB6tPAeoFTnSouRXVsb12E3AAAAAAEJAAB6tPAeoFTnSouRXVsb12E3AACGEj9DAAA%3D&exvsurl=1&viewmodel=ReadMessageItem"
+    },
+    {
+      "name": "Jennifer Osuna (Stanford)",
+      "email": "jmlo@stanford.edu",
+      "subject": "Seeking RA Opportunities – Stanford LDT Student",
+      "date": "2026-11-05",
+      "days": 7,
+      "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADNlZTYxMjMwLTRmN2ItNGRjMC05MTE0LTY2YzQyZjczMDc1ZABGAAAAAACaUSYRLnTqRKTjNn7964aiBwB6tPAeoFTnSouRXVsb12E3AAAAAAEJAAB6tPAeoFTnSouRXVsb12E3AACH1lfcAAA%3D&exvsurl=1&viewmodel=ReadMessageItem"
+    }
+  ],
+  "needsReply": [
+    {
+      "name": "Sarah W. Beck (NYU)",
+      "email": "sarah.beck@nyu.edu",
+      "subject": "Re: Prospective PhD Student – Human-AI Interaction in English Education",
+      "date": "2026-11-11",
+      "days": 1,
+      "why": "Said she doesn't expect to take a student this cycle but encouraged you to apply. A short thank-you is optional.",
+      "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADNlZTYxMjMwLTRmN2ItNGRjMC05MTE0LTY2YzQyZjczMDc1ZABGAAAAAACaUSYRLnTqRKTjNn7964aiBwB6tPAeoFTnSouRXVsb12E3AAAAAAEMAAB6tPAeoFTnSouRXVsb12E3AACMkVd2AAA%3D&exvsurl=1&viewmodel=ReadMessageItem"
+    },
+    {
+      "name": "Bodong Chen (Penn GSE)",
+      "email": "cbd@upenn.edu",
+      "subject": "Re: Prospective PhD Student (Collaborative Learning and Learning Analytics)",
+      "date": "2026-11-12",
+      "days": 0,
+      "why": "Is taking students for Fall 2027 and sees a strong fit, but only admits through the LST program. A short thank-you is optional.",
+      "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADNlZTYxMjMwLTRmN2ItNGRjMC05MTE0LTY2YzQyZjczMDc1ZABGAAAAAACaUSYRLnTqRKTjNn7964aiBwB6tPAeoFTnSouRXVsb12E3AAAAAAEMAAB6tPAeoFTnSouRXVsb12E3AACMkVeIAAA%3D&exvsurl=1&viewmodel=ReadMessageItem"
+    }
+  ]
 }
