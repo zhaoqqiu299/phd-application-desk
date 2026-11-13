@@ -52,7 +52,7 @@ const server = http.createServer(async (req, res) => {
       if (url.pathname === "/api/ask" && req.method === "POST") {
         const body = await readBody(req);
         const programs = Array.isArray(body.programs) ? body.programs : await loadPrograms();
-        const { status, body: out } = await answer({ programs, history: body.history, todos: body.todos });
+        const { status, body: out } = await answer({ programs, history: body.history, todos: body.todos, context: body.context });
         return send(res, status, out);
       }
       return send(res, 404, { error: "not_found" });

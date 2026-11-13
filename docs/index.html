@@ -6,88 +6,162 @@
 <title>PhD Application Desk</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
 <style>
-/* Layout: a working desk — summary strip, then program ledger (left) beside an advisor chat (right); stacks on phones. */
+/* Layout: a calm desk. One page per job (Overview, Programs, Faculty, To-do, Diary, Email),
+   a single nav row, and an Ask drawer that slides in from the right on demand. */
 :root {
   --bg: #f3f5f8; --surface: #ffffff; --fg: #18202e; --muted: #5d6779; --line: #dde2ea;
   --accent: #1f4fa3; --accent-soft: #e5ecf8;
-  --ok: #1d7a4a; --warn: #b26a00; --bad: #b3261e;
+  --ok: #1d7a4a; --ok-soft: #e3f3ea; --warn: #a15c00; --warn-soft: #fbf0de; --bad: #b3261e; --bad-soft: #fbe6e4;
+  --c1: #1f4fa3; --c2: #c2410c; --c3: #0f766e; --c4: #7c3aed; --c5: #a16207; --c6: #be185d; --c0: #8a94a6;
   --display: "Newsreader", Georgia, serif;
   --sans: "IBM Plex Sans", system-ui, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #11151c; --surface: #1a2029; --fg: #e6eaf1; --muted: #98a2b3; --line: #2b3340;
-  --accent: #7aa5ff; --accent-soft: #1f2b44; --ok: #5cc98d; --warn: #f0b154; --bad: #ff8a80; color-scheme: dark } }
+  --accent: #7aa5ff; --accent-soft: #1f2b44; --ok: #5cc98d; --ok-soft: #173326; --warn: #f0b154; --warn-soft: #3a2c14; --bad: #ff8a80; --bad-soft: #3d1d1b;
+  --c1: #7aa5ff; --c2: #fb923c; --c3: #2dd4bf; --c4: #a78bfa; --c5: #facc15; --c6: #f472b6; --c0: #6b7587; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #11151c; --surface: #1a2029; --fg: #e6eaf1; --muted: #98a2b3; --line: #2b3340;
-  --accent: #7aa5ff; --accent-soft: #1f2b44; --ok: #5cc98d; --warn: #f0b154; --bad: #ff8a80; color-scheme: dark }
+  --accent: #7aa5ff; --accent-soft: #1f2b44; --ok: #5cc98d; --ok-soft: #173326; --warn: #f0b154; --warn-soft: #3a2c14; --bad: #ff8a80; --bad-soft: #3d1d1b;
+  --c1: #7aa5ff; --c2: #fb923c; --c3: #2dd4bf; --c4: #a78bfa; --c5: #facc15; --c6: #f472b6; --c0: #6b7587; color-scheme: dark }
 * { box-sizing: border-box }
 [hidden] { display: none !important }
-body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 14px; line-height: 1.5;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 40px }
-.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 20px }
-header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px }
-h1 { font-family: var(--display); font-weight: 600; font-size: 30px; margin: 0; text-wrap: balance }
-.sub { color: var(--muted); margin: 2px 0 0 }
-.stats { display: flex; flex-wrap: wrap; gap: 8px }
-.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; min-width: 110px }
-.stat b { display: block; font-family: var(--mono); font-size: 18px; font-weight: 500; font-variant-numeric: tabular-nums }
-.stat span { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted) }
-.main { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 20px; align-items: start }
-@media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr) } }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; min-width: 0 }
-.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line) }
-.panel-head h2 { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 0 }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 14px; line-height: 1.5; margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 48px }
+a { color: var(--accent) }
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 18px }
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap }
+h1 { font-family: var(--display); font-weight: 600; font-size: 28px; margin: 0; letter-spacing: -.01em }
+h2 { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 0; text-wrap: balance }
+h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 500; margin: 0 }
+nav.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none }
+nav.tabs a { padding: 9px 14px; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500; white-space: nowrap }
+nav.tabs a:hover { color: var(--fg) }
+nav.tabs a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--accent) }
+.count { font-family: var(--mono); font-size: 11px; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 0 7px; margin-left: 5px }
 button { font: inherit; cursor: pointer; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); padding: 6px 12px }
 button.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 500 }
 button.link { border: 0; background: none; color: var(--muted); padding: 2px 6px }
 button.link:hover { color: var(--fg) }
-button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
-.list { display: grid }
-.row { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--line); align-items: start }
-.row:last-child { border-bottom: 0 }
-.due { font-family: var(--mono); text-align: center; border-radius: 6px; padding: 6px 4px; background: var(--accent-soft) }
-.due b { display: block; font-size: 20px; font-weight: 500; line-height: 1.1; font-variant-numeric: tabular-nums }
-.due small { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted) }
-.due.soon b { color: var(--warn) } .due.past b { color: var(--muted) }
-.name { font-weight: 600; font-size: 15px }
-.meta { color: var(--muted); font-size: 13px }
-.checks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px }
-.chip { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; color: var(--muted); background: none; cursor: pointer }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+input, select, textarea { font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; width: 100% }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; min-width: 0 }
+.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap }
+.panel-body { padding: 14px 16px }
+.note { font-size: 12px; color: var(--muted) }
+.empty { padding: 28px 16px; color: var(--muted); text-align: center }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 18px; align-items: start }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px }
+.stat b { display: block; font-family: var(--mono); font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums }
+.stat span { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted) }
+.pill { display: inline-block; font-size: 12px; font-weight: 500; border-radius: 999px; padding: 1px 10px; white-space: nowrap; border: 1px solid currentColor }
+.st-taking { color: var(--ok); background: var(--ok-soft); border-color: transparent }
+.st-replied { color: var(--accent); background: var(--accent-soft); border-color: transparent }
+.st-waiting { color: var(--warn); background: var(--warn-soft); border-color: transparent }
+.st-not-taking { color: var(--bad); background: var(--bad-soft); border-color: transparent }
+.st-none { color: var(--muted) }
+.s-Researching { color: var(--muted) } .s-Drafting { color: var(--warn) } .s-Submitted, .s-Interview { color: var(--accent) } .s-Admitted { color: var(--ok) } .s-Rejected { color: var(--bad) }
+.chip { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; color: var(--muted); background: none; cursor: pointer; text-decoration: none; display: inline-block }
 .chip.done { border-color: var(--ok); color: var(--ok) }
-.notes { margin-top: 6px; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; white-space: pre-line }
-.pill { font-size: 12px; font-weight: 500; border-radius: 999px; padding: 2px 10px; white-space: nowrap; border: 1px solid currentColor }
-.s-Researching { color: var(--muted) } .s-Drafting { color: var(--warn) } .s-Submitted { color: var(--accent) }
-.s-Interview { color: var(--accent) } .s-Admitted { color: var(--ok) } .s-Rejected { color: var(--bad) }
-.side { display: flex; flex-direction: column; align-items: end; gap: 6px }
-.empty { padding: 32px 16px; color: var(--muted); text-align: center }
-.example { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--warn) }
-form.edit { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; padding: 16px; border-bottom: 1px solid var(--line); background: var(--accent-soft) }
+a.chip:hover { border-color: var(--accent); color: var(--accent) }
+.chips { display: flex; flex-wrap: wrap; gap: 6px }
+/* Overview */
+.alert { display: grid; grid-template-columns: 4px minmax(0, 1fr); gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--line) }
+.alert:last-child { border-bottom: 0 }
+.alert::before { content: ""; border-radius: 2px; background: var(--muted) }
+.alert.bad::before { background: var(--bad) } .alert.warn::before { background: var(--warn) } .alert.info::before { background: var(--accent) }
+.alert .meta { font-size: 12px; color: var(--muted) }
+.dl { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); align-items: center }
+.dl:last-child { border-bottom: 0 }
+.days { font-family: var(--mono); text-align: center; border-radius: 6px; padding: 4px; background: var(--accent-soft); line-height: 1.15 }
+.days b { display: block; font-size: 18px; font-weight: 500; font-variant-numeric: tabular-nums }
+.days small { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted) }
+.days.soon b { color: var(--warn) } .days.past b { color: var(--muted) }
+.missing { font-size: 12px; color: var(--muted) } .missing b { color: var(--warn); font-weight: 500 }
+.tablewrap { overflow-x: auto }
+table.matrix { width: 100%; border-collapse: collapse; font-size: 13px }
+table.matrix th, table.matrix td { padding: 8px 12px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap }
+table.matrix th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 500 }
+table.matrix td.c { text-align: center }
+table.matrix .yes { color: var(--ok); font-weight: 500 } table.matrix .no { color: var(--line) }
+table.matrix tr:last-child td { border-bottom: 0 }
+/* Programs */
+.prog { border-bottom: 1px solid var(--line) }
+.prog:last-child { border-bottom: 0 }
+.prog-main { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; padding: 14px 16px; align-items: start }
+.prog .name { font-weight: 600; font-size: 15px }
+.prog .sub { color: var(--muted); font-size: 13px }
+.prog .row2 { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; align-items: center }
+.prog .side { display: flex; flex-direction: column; align-items: end; gap: 6px }
+.prog details { padding: 0 16px 12px 94px }
+.prog summary { cursor: pointer; color: var(--muted); font-size: 13px; width: max-content }
+.notes { margin-top: 6px; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; white-space: pre-line; max-width: 80ch }
+.recv { font-size: 12px; color: var(--ok) }
+@media (max-width: 560px) { .prog-main { grid-template-columns: 56px minmax(0, 1fr) } .prog .side { grid-column: 1 / -1; flex-direction: row; justify-content: space-between } .prog details { padding-left: 16px } }
+form.edit { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; padding: 16px; border-bottom: 1px solid var(--line); background: var(--accent-soft) }
 form.edit label { display: grid; gap: 3px; font-size: 12px; color: var(--muted) }
 form.edit .wide { grid-column: 1 / -1 }
-input, select, textarea { font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; width: 100% }
 .actions { display: flex; gap: 8px; justify-content: end; grid-column: 1 / -1 }
-.chat { display: flex; flex-direction: column; height: min(640px, 80vh) }
-.msgs { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px }
-.msg { max-width: 92%; padding: 8px 12px; border-radius: 10px; white-space: pre-wrap; overflow-wrap: anywhere }
-.msg.user { align-self: end; background: var(--accent); color: var(--surface) }
-.msg.bot { align-self: start; background: var(--accent-soft) }
-.sugg { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px }
-.sugg button { font-size: 12px; padding: 3px 10px; border-radius: 999px; color: var(--muted) }
-form.ask { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line) }
-form.ask textarea { resize: none; height: 40px }
-.note { font-size: 12px; color: var(--muted); padding: 0 16px 10px }
-@media (max-width: 520px) { .row { grid-template-columns: 60px minmax(0, 1fr) } .side { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; align-items: center } }
-a { color: var(--accent) }
+/* Faculty */
+.school-group { display: grid; gap: 10px }
+.school-group > h3 { padding: 4px 2px 0 }
+.fac-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px }
+.fac-card { display: grid; gap: 6px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; text-decoration: none; color: inherit; align-content: start }
+.fac-card:hover { border-color: var(--accent) }
+.fac-card .n { font-weight: 600; font-size: 15px }
+.fac-card .p { font-size: 13px; color: var(--muted) }
+.fac-card .topics { font-size: 12px; color: var(--muted); min-height: 18px }
+.fac-card .nums { font-family: var(--mono); font-size: 12px; color: var(--muted) }
+.back { text-decoration: none; font-size: 13px }
+.fac-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: start }
+.fac-head .who { display: grid; gap: 4px }
+.fac-head .links, .links { display: flex; gap: 6px 18px; flex-wrap: wrap; font-size: 13px; align-items: center }
+.contact-box { border-left: 3px solid var(--accent); padding: 8px 14px; background: var(--accent-soft); border-radius: 0 8px 8px 0; font-size: 13px }
+.cloud { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; justify-content: center; padding: 18px 16px; line-height: 1.25 }
+.cloud span { font-family: var(--display); font-weight: 500; white-space: nowrap }
+.bars { display: grid; gap: 7px; padding: 14px 16px }
+.bar { display: grid; grid-template-columns: minmax(0, 1fr) 40px; gap: 4px 10px; font-size: 13px; align-items: center }
+.bar .track { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--accent-soft); overflow: hidden }
+.bar .fill { height: 100%; background: var(--accent); border-radius: 3px }
+.bar .v { font-family: var(--mono); font-size: 12px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums }
+.bar .lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.years { display: flex; align-items: end; gap: 4px; height: 90px; padding: 10px 16px 0 }
+.years div { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: end; gap: 3px; height: 100%; min-width: 0 }
+.years i { display: block; width: 100%; max-width: 26px; background: var(--accent); border-radius: 3px 3px 0 0; min-height: 2px }
+.years span { font-family: var(--mono); font-size: 10px; color: var(--muted) }
+.years em { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--muted) }
+.papers { display: grid }
+.paper { padding: 10px 16px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px }
+.paper:last-child { border-bottom: 0 }
+.paper .y { font-family: var(--mono); color: var(--muted); font-size: 13px }
+.paper .t { font-weight: 500; overflow-wrap: anywhere }
+.paper .m { font-size: 12px; color: var(--muted); overflow-wrap: anywhere }
+.paper .m b { color: var(--fg); font-weight: 500 }
+#netBox { position: relative }
+#netBox svg { display: block; width: 100%; height: auto }
+#netBox text { font-size: 11px; fill: var(--fg); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; pointer-events: none }
+#netBox line { stroke: var(--muted); stroke-opacity: .35 }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 0 16px 12px; font-size: 12px; color: var(--muted) }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px }
+.tip { position: absolute; pointer-events: none; background: var(--fg); color: var(--surface); font-size: 12px; padding: 5px 8px; border-radius: 6px; max-width: 240px }
+table.collab { width: 100%; border-collapse: collapse; font-size: 13px }
+table.collab td, table.collab th { padding: 7px 16px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top }
+table.collab th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 500 }
+table.collab td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap }
+table.collab tr:last-child td { border-bottom: 0 }
+.loading { padding: 24px 16px; color: var(--muted) }
+/* To-do + diary */
 .todo-add { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line) }
-.todo-add input[type=date], .todo-add select { width: auto }
+.todo-add input[type=date], .todo-add select { width: auto; max-width: 220px }
 @media (max-width: 640px) { .todo-add { grid-template-columns: 1fr 1fr } .todo-add #todoText { grid-column: 1 / -1 } }
 .todo { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 10px 16px; border-bottom: 1px solid var(--line) }
 .todo:last-child { border-bottom: 0 }
 .todo input[type=checkbox] { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent) }
 .todo .t { overflow-wrap: anywhere }
 .todo .tm { font-size: 12px; color: var(--muted) }
-.todo .tm .late { color: var(--bad); font-weight: 500 } .todo .tm .soon { color: var(--warn); font-weight: 500 }
+.todo .late { color: var(--bad); font-weight: 500 } .todo .soonx { color: var(--warn); font-weight: 500 }
 .todo.done .t { text-decoration: line-through; color: var(--muted) }
 .group-label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 10px 16px 4px }
 .diary-add { display: grid; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line) }
@@ -96,45 +170,106 @@ a { color: var(--accent) }
 .entry-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px }
 .entry-date { font-family: var(--display); font-weight: 600; font-size: 16px }
 .entry-body { white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 4px; max-width: 70ch }
-nav.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line) }
-nav.tabs a { padding: 8px 14px; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500 }
-nav.tabs a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--accent) }
-nav.tabs .count { font-family: var(--mono); font-size: 11px; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 0 7px; margin-left: 4px }
-.recv { margin-top: 6px; font-size: 13px; color: var(--ok) }
-.mail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 20px; align-items: start }
-.mail { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 16px; border-bottom: 1px solid var(--line) }
+/* Email */
+.mail { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 12px; padding: 12px 16px; border-bottom: 1px solid var(--line) }
 .mail:last-child { border-bottom: 0 }
 .mail .who { font-weight: 600 } .mail .subj { grid-column: 1 / -1; overflow-wrap: anywhere }
 .mail .why { grid-column: 1 / -1; font-size: 13px; color: var(--muted) }
 .mail .age { font-family: var(--mono); font-size: 12px; color: var(--warn); white-space: nowrap; text-align: right }
-.mail a.open { font-size: 13px }
-.updated { font-size: 12px; color: var(--muted); padding: 8px 16px; border-top: 1px solid var(--line) }
-.letters-table { width: 100%; border-collapse: collapse; font-size: 13px }
-.letters-table td, .letters-table th { text-align: left; padding: 8px 16px; border-bottom: 1px solid var(--line); vertical-align: top }
-.letters-table th { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 500 }
-.letters-table td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap }
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important } }
+/* Ask drawer */
+#askToggle { display: inline-flex; align-items: center; gap: 6px }
+aside.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 100vw); background: var(--surface); border-left: 1px solid var(--line);
+  box-shadow: -12px 0 32px rgba(0,0,0,.12); display: flex; flex-direction: column; z-index: 20; transform: translateX(105%); transition: transform .2s ease;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-right: env(safe-area-inset-right, 0px) }
+aside.drawer.open { transform: none }
+.msgs { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px }
+.msg { max-width: 92%; padding: 8px 12px; border-radius: 10px; white-space: pre-wrap; overflow-wrap: anywhere }
+.msg.user { align-self: end; background: var(--accent); color: var(--surface) }
+.msg.bot { align-self: start; background: var(--accent-soft) }
+.sugg { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px }
+.sugg button { font-size: 12px; padding: 3px 10px; border-radius: 999px; color: var(--muted) }
+.ctx { font-size: 12px; color: var(--accent); padding: 0 16px 8px }
+form.ask { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line) }
+form.ask textarea { resize: none; height: 42px }
+.flash { padding: 10px 16px; background: var(--accent-soft); color: var(--accent); font-size: 13px; border-radius: 8px }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important } }
 </style>
 </head>
 <body>
-
 <div class="wrap">
-  <header>
-    <div>
-      <h1>PhD Application Desk</h1>
-      <p class="sub">Track every program, deadline and document. Ask questions about your list on the right.</p>
-    </div>
-    <div class="stats" id="stats"></div>
+  <header class="top">
+    <h1>PhD Application Desk</h1>
+    <button class="primary" id="askToggle" type="button" aria-expanded="false" aria-controls="askDrawer">✦ Ask AI</button>
   </header>
 
   <nav class="tabs" aria-label="Pages">
-    <a href="#programs" id="tab-programs">Programs</a>
-    <a href="#todo" id="tab-todo">To-do<span class="count" id="todoCount" hidden></span></a>
-    <a href="#diary" id="tab-diary">Diary</a>
-    <a href="#email" id="tab-email">Email<span class="count" id="mailCount" hidden></span></a>
+    <a href="#overview" data-tab="overview">Overview</a>
+    <a href="#programs" data-tab="programs">Programs</a>
+    <a href="#faculty" data-tab="faculty">Faculty</a>
+    <a href="#todo" data-tab="todo">To-do<span class="count" id="todoCount" hidden></span></a>
+    <a href="#diary" data-tab="diary">Diary</a>
+    <a href="#email" data-tab="email">Email<span class="count" id="mailCount" hidden></span></a>
   </nav>
 
-  <div id="view-todo" hidden>
+  <div id="flashBox"></div>
+
+  <!-- OVERVIEW -->
+  <main id="view-overview" class="view" style="display:grid;gap:18px">
+    <div class="stats" id="stats"></div>
+    <div class="grid2">
+      <section class="panel">
+        <div class="panel-head"><h2>Coming up</h2><a href="#programs" class="note">All programs →</a></div>
+        <div id="upcoming"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Needs your attention</h2></div>
+        <div id="attention"></div>
+      </section>
+    </div>
+    <section class="panel">
+      <div class="panel-head"><h2>Recommendation letters</h2><span class="note" id="lettersNote"></span></div>
+      <div class="tablewrap" id="letterMatrix"></div>
+    </section>
+    <div class="grid2">
+      <section class="panel">
+        <div class="panel-head"><h2>Faculty contacts</h2><a href="#faculty" class="note">All faculty →</a></div>
+        <div class="panel-body" id="facSummary"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>Open to-dos</h2><a href="#todo" class="note">All to-dos →</a></div>
+        <div id="ovTodos"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- PROGRAMS -->
+  <main id="view-programs" class="view" hidden>
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Programs</h2>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+          <button class="link" id="importBtn" type="button" title="Add from a .json backup">Import</button>
+          <button class="link" id="exportBtn" type="button" title="Save programs, to-dos and diary as a .json backup">Export</button>
+          <input id="importFile" type="file" accept=".json,application/json" hidden>
+          <button class="primary" id="addBtn" type="button">+ Add program</button>
+        </div>
+      </div>
+      <div id="formSlot"></div>
+      <div id="list"><div class="empty">Loading your programs…</div></div>
+    </section>
+  </main>
+
+  <!-- FACULTY LIST -->
+  <main id="view-faculty" class="view" hidden style="display:grid;gap:20px">
+    <div class="note">Click a faculty member to see their recent papers, research directions and collaborators. Publication data comes from OpenAlex and is cached in your browser for a week.</div>
+    <div id="facList"></div>
+  </main>
+
+  <!-- FACULTY DETAIL -->
+  <main id="view-person" class="view" hidden style="display:grid;gap:18px"></main>
+
+  <!-- TO-DO -->
+  <main id="view-todo" class="view" hidden>
     <section class="panel">
       <div class="panel-head"><h2>To-do</h2><button class="link" id="clearDone" type="button">Clear finished</button></div>
       <form class="todo-add" id="todoForm">
@@ -145,88 +280,81 @@ nav.tabs .count { font-family: var(--mono); font-size: 11px; background: var(--a
       </form>
       <div id="todoList"></div>
     </section>
-  </div>
+  </main>
 
-  <div id="view-diary" hidden>
+  <!-- DIARY -->
+  <main id="view-diary" class="view" hidden>
     <section class="panel">
-      <div class="panel-head"><h2>Diary</h2><span class="note" style="padding:0">Saved only in this browser. Never uploaded.</span></div>
+      <div class="panel-head"><h2>Diary</h2><span class="note">Saved only in this browser. Never uploaded.</span></div>
       <form class="diary-add" id="diaryForm">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <input id="diaryDate" type="date" required aria-label="Date" style="width:auto">
-          <span class="note" style="padding:0" id="diaryHint"></span>
+          <span class="note" id="diaryHint"></span>
         </div>
-        <textarea id="diaryText" rows="5" required placeholder="How did today go? What did you learn, who did you talk to, how are you feeling?" aria-label="Diary entry"></textarea>
+        <textarea id="diaryText" rows="5" required placeholder="How did today go? Who did you talk to, what did you learn, how are you feeling?" aria-label="Diary entry"></textarea>
         <div class="actions"><button type="button" id="diaryCancel" hidden>Cancel edit</button><button class="primary" type="submit" id="diarySave">Save entry</button></div>
       </form>
       <div id="diaryList"></div>
     </section>
-  </div>
+  </main>
 
-  <div id="view-email" hidden>
-    <div class="mail-grid">
+  <!-- EMAIL -->
+  <main id="view-email" class="view" hidden style="display:grid;gap:18px">
+    <div class="grid2">
       <section class="panel">
-        <div class="panel-head"><h2>Waiting on a reply</h2></div>
-        <p class="note" style="padding-top:10px">Emails you sent to professors or admissions offices with no reply after 7+ days.</p>
-        <div id="awaiting"><div class="empty">Loading…</div></div>
+        <div class="panel-head"><h2>Waiting on a reply</h2><span class="note">Sent 7+ days ago, no answer</span></div>
+        <div id="awaiting"></div>
       </section>
       <section class="panel">
-        <div class="panel-head"><h2>You haven't replied</h2></div>
-        <p class="note" style="padding-top:10px">Important emails from professors or admissions offices that still need your answer.</p>
-        <div id="needsReply"><div class="empty">Loading…</div></div>
+        <div class="panel-head"><h2>You haven't replied</h2><span class="note">From faculty or admissions</span></div>
+        <div id="needsReply"></div>
       </section>
     </div>
-    <section class="panel" style="margin-top:20px">
-      <div class="panel-head"><h2>Recommendation letters received</h2></div>
-      <div style="overflow-x:auto" id="lettersBox"><div class="empty">Loading…</div></div>
-      <div class="updated" id="statusUpdated"></div>
-    </section>
-  </div>
-
-  <div class="main" id="view-programs">
-    <section class="panel">
-      <div class="panel-head">
-        <h2>Programs</h2>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:end">
-          <button class="link" id="importBtn" type="button" title="Add programs from a .json file exported from this site">Import</button>
-          <button class="link" id="exportBtn" type="button" title="Save your list as a .json backup file">Export</button>
-          <input id="importFile" type="file" accept=".json,application/json" hidden>
-          <button class="primary" id="addBtn" type="button">+ Add program</button>
-        </div>
-      </div>
-      <div id="formSlot"></div>
-      <div class="list" id="list"><div class="empty">Loading your programs…</div></div>
-    </section>
-
-    <section class="panel chat">
-      <div class="panel-head"><h2>Ask</h2><button class="link" id="clearChat" type="button">Clear</button></div>
-      <div class="msgs" id="msgs">
-        <div class="msg bot">Hi! I can see your program list. Ask me what's due next, how to prioritize, or for help with your statement of purpose or emails to professors.</div>
-      </div>
-      <div class="sugg" id="sugg">
-        <button type="button">What should I work on this week?</button>
-        <button type="button">Which programs are still missing letters?</button>
-        <button type="button">Draft an email to a potential advisor</button>
-      </div>
-      <p class="note" id="askNote" hidden></p>
-      <form class="ask" id="askForm">
-        <textarea id="askInput" placeholder="Ask anything about your applications…" aria-label="Your question"></textarea>
-        <button class="primary" type="submit" id="askBtn">Send</button>
-      </form>
-    </section>
-  </div>
+    <p class="note" id="statusUpdated"></p>
+  </main>
 </div>
 
+<!-- ASK DRAWER -->
+<aside class="drawer" id="askDrawer" aria-label="Ask AI" inert>
+  <div class="panel-head"><h2>Ask AI</h2><span><button class="link" id="clearChat" type="button">Clear</button><button class="link" id="askClose" type="button" aria-label="Close">✕</button></span></div>
+  <div class="msgs" id="msgs"><div class="msg bot">Hi! I can see your programs, open to-dos and faculty contacts. Ask what to do next, or open a faculty page and ask about their research.</div></div>
+  <div class="ctx" id="askCtx" hidden></div>
+  <div class="sugg" id="sugg"></div>
+  <form class="ask" id="askForm">
+    <textarea id="askInput" placeholder="Ask anything about your applications…" aria-label="Your question"></textarea>
+    <button class="primary" type="submit" id="askBtn">Send</button>
+  </form>
+</aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script>
-const STATUSES = ["Researching", "Drafting", "Submitted", "Interview", "Admitted", "Rejected"];
-const DOCS = [["sop", "SOP"], ["cv", "CV"], ["transcripts", "Transcripts"], ["scores", "Test scores"]];
-let programs = [];
-let editingId = null;
+// ================= utilities =================
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-// Where the Ask server lives. Leave "" when this page is served by server.mjs itself.
-// On GitHub Pages, set it to your deployed server, e.g. "https://phd-desk.onrender.com".
+const slug = (s) => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+const daysLeft = (d) => d ? Math.ceil((new Date(d + "T23:59:00") - new Date()) / 86400000) : null;
+const fmtDate = (d, opts) => d ? new Date(d + (d.length === 10 ? "T12:00" : "")).toLocaleDateString(undefined, opts || { month: "short", day: "numeric" }) : "";
+const store = {
+  get(k, fb = []) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fb; } catch { return fb; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } },
+};
+function flash(msg) {
+  const el = document.createElement("div"); el.className = "flash"; el.textContent = msg;
+  $("flashBox").replaceChildren(el); setTimeout(() => el.remove(), 6000);
+}
+const STATUSES = ["Researching", "Drafting", "Submitted", "Interview", "Admitted", "Rejected"];
+const DONE = ["Submitted", "Interview", "Admitted", "Rejected"];
+const DOCS = [["sop", "SOP"], ["cv", "CV"], ["transcripts", "Transcripts"], ["scores", "Test scores"]];
+const FAC_STATUS = { taking: "Taking students", replied: "Replied", waiting: "Emailed · waiting", "not-taking": "Not taking this cycle", none: "Not contacted" };
+
+// ================= state =================
+// Where the Ask server lives. Leave "" when this page is served by server.mjs or Vercel.
 const API_BASE = "";
-let mode = "server"; // "server" or "local" (browser-only, e.g. GitHub Pages)
+let mode = "server";
+let programs = [], todos = store.get("phd-todos"), diary = store.get("phd-diary");
+let letters = null, emails = null, faculty = [], profile = { recommenders: [], keyFacts: [] };
 
 async function api(path, opts = {}) {
   const r = await fetch(API_BASE + path, { ...opts, headers: { "Content-Type": "application/json", ...(opts.headers || {}) } });
@@ -234,65 +362,114 @@ async function api(path, opts = {}) {
   if (!r.ok) throw { code: data.error || r.status };
   return data;
 }
-const localLoad = () => { try { return JSON.parse(localStorage.getItem("phd-programs")) || []; } catch { return []; } };
-const localSave = () => { try { localStorage.setItem("phd-programs", JSON.stringify(programs)); } catch {} };
+const getJson = (f) => fetch(f, { cache: "no-store" }).then((r) => r.ok ? r.json() : null).catch(() => null);
 
-function daysLeft(d) {
-  if (!d) return null;
-  return Math.ceil((new Date(d + "T23:59:00") - new Date()) / 86400000);
+function lettersFor(school) {
+  const schools = letters?.schools || {}, n = norm(school);
+  const key = Object.keys(schools).find((k) => norm(k) === n) || Object.keys(schools).find((k) => n && (norm(k).includes(n) || n.includes(norm(k))));
+  return key ? schools[key] : [];
 }
+function applyLetterCounts() {
+  let changed = false;
+  programs.forEach((p) => { const n = Math.min(3, lettersFor(p.school).length); if (n > (p.lors || 0)) { p.lors = n; changed = true; } });
+  return changed;
+}
+const facultyAt = (school) => faculty.filter((f) => norm(f.school) === norm(school) || norm(school).includes(norm(f.school)) || norm(f.school).includes(norm(school)));
 
-function render() {
+async function persist() {
+  applyLetterCounts();
+  renderAll();
+  if (mode === "local") { store.set("phd-programs", programs); return; }
+  try { await api("/api/programs", { method: "PUT", body: JSON.stringify(programs) }); }
+  catch { flash("Couldn't save to the server. Check that it is running, then try again."); }
+}
+const saveTodos = () => { store.set("phd-todos", todos); renderAll(); };
+const saveDiary = () => { store.set("phd-diary", diary); renderDiary(); };
+
+// ================= overview =================
+function renderOverview() {
   const sorted = [...programs].sort((a, b) => (a.deadline || "9999").localeCompare(b.deadline || "9999"));
-  const done = ["Submitted", "Interview", "Admitted", "Rejected"];
-  const next = sorted.find((p) => (daysLeft(p.deadline) ?? -1) >= 0 && !done.includes(p.status));
-  const fees = programs.reduce((s, p) => s + (Number(p.fee) || 0), 0);
+  const active = sorted.filter((p) => !DONE.includes(p.status));
+  const next = active.find((p) => (daysLeft(p.deadline) ?? -1) >= 0);
+  const openTodos = todos.filter((t) => !t.done);
+  const lettersIn = Object.values(letters?.schools || {}).reduce((s, l) => s + l.length, 0);
   $("stats").innerHTML = [
-    [programs.length, "Programs"],
-    [programs.filter((p) => !done.includes(p.status)).length, "In progress"],
-    [programs.filter((p) => done.includes(p.status)).length, "Submitted"],
     [next ? daysLeft(next.deadline) + "d" : "—", "Next deadline"],
-    ["$" + fees, "Fees"],
+    [active.length + " / " + programs.length, "Programs in progress"],
+    [lettersIn, "Letters received"],
+    [faculty.filter((f) => ["taking", "replied"].includes(f.status)).length, "Faculty replied"],
+    [openTodos.length, "Open to-dos"],
   ].map(([v, l]) => `<div class="stat"><b>${esc(v)}</b><span>${l}</span></div>`).join("");
 
-  if (!programs.length) {
-    $("list").innerHTML = `<div class="empty">No programs yet. Click <b>+ Add program</b> to add your first school.</div>`;
-    return;
-  }
+  const up = active.filter((p) => (daysLeft(p.deadline) ?? -1) >= 0).slice(0, 6);
+  $("upcoming").innerHTML = up.length ? up.map((p) => {
+    const d = daysLeft(p.deadline);
+    const miss = DOCS.filter(([k]) => !p[k]).map(([, l]) => l);
+    if ((p.lors || 0) < 3) miss.push(`${3 - (p.lors || 0)} letter${3 - (p.lors || 0) > 1 ? "s" : ""}`);
+    return `<div class="dl"><div class="days ${d <= 14 ? "soon" : ""}"><b>${d}</b><small>${esc(fmtDate(p.deadline))}</small></div>
+      <div style="min-width:0"><div><b>${esc(p.school)}</b> <span class="pill s-${esc(p.status)}" style="margin-left:4px">${esc(p.status)}</span></div>
+      <div class="missing">${miss.length ? "Still missing: <b>" + esc(miss.join(", ")) + "</b>" : "All materials checked off ✓"}</div></div></div>`;
+  }).join("") : `<div class="empty">${programs.length ? "No upcoming deadlines." : `No programs yet. <a href="#programs">Add or import your list</a>.`}</div>`;
+
+  const items = [];
+  (profile.keyFacts || []).forEach((f) => items.push({ level: f.level || "info", text: f.text, meta: [f.school, fmtDate(f.date)].filter(Boolean).join(" · ") }));
+  const nr = emails?.needsReply?.length || 0, aw = emails?.awaitingReply?.length || 0;
+  if (nr) items.push({ level: "warn", text: `${nr} email${nr > 1 ? "s" : ""} from faculty or admissions waiting for your reply.`, meta: `<a href="#email">Open Email →</a>` });
+  if (aw) items.push({ level: "info", text: `${aw} faculty haven't replied to you in 7+ days. A polite follow-up may help.`, meta: `<a href="#email">Open Email →</a>` });
+  const late = openTodos.filter((t) => t.due && daysLeft(t.due) < 0).length;
+  if (late) items.push({ level: "bad", text: `${late} overdue to-do${late > 1 ? "s" : ""}.`, meta: `<a href="#todo">Open To-do →</a>` });
+  $("attention").innerHTML = items.length ? items.map((i) => `<div class="alert ${esc(i.level)}"><div><div>${esc(i.text)}</div>${i.meta ? `<div class="meta">${i.meta.startsWith("<a") ? i.meta : esc(i.meta)}</div>` : ""}</div></div>`).join("") : `<div class="empty">Nothing urgent. 🎉</div>`;
+
+  // letters matrix: schools with the nearest deadlines × recommenders
+  const recs = [...new Set([...(profile.recommenders || []), ...Object.values(letters?.schools || {}).flat().map((l) => l.recommender)])];
+  const rows = active.filter((p) => p.deadline).slice(0, 8);
+  $("lettersNote").textContent = letters?.updated ? "Updated from your inbox " + new Date(letters.updated).toLocaleDateString() : "";
+  $("letterMatrix").innerHTML = rows.length && recs.length ? `<table class="matrix"><thead><tr><th>School</th><th>Due</th>${recs.map((r) => `<th class="c">${esc(r)}</th>`).join("")}<th class="c">Total</th></tr></thead><tbody>${
+    rows.map((p) => { const got = lettersFor(p.school); return `<tr><td>${esc(p.school)}</td><td>${esc(fmtDate(p.deadline))}</td>${recs.map((r) => { const l = got.find((x) => norm(x.recommender) === norm(r)); return `<td class="c">${l ? `<span class="yes" title="Received ${esc(fmtDate(l.date))}">✓ ${esc(fmtDate(l.date))}</span>` : `<span class="no">—</span>`}</td>`; }).join("")}<td class="c">${Math.max(got.length, p.lors || 0)}/3</td></tr>`; }).join("")
+  }</tbody></table>` : `<div class="empty">Add programs with deadlines to see who has sent which letter.</div>`;
+
+  const by = (s) => faculty.filter((f) => f.status === s);
+  $("facSummary").innerHTML = faculty.length ? `<div style="display:grid;gap:12px">${["taking", "replied", "waiting", "not-taking"].map((s) => by(s).length ? `<div><h3 style="margin-bottom:6px">${FAC_STATUS[s]} · ${by(s).length}</h3><div class="chips">${by(s).map((f) => `<a class="chip" href="#faculty-${slug(f.name)}">${esc(f.name)} <span class="note">· ${esc(shortSchool(f.school))}</span></a>`).join("")}</div></div>` : "").join("")}
+    <div class="note">${by("none").length} more not contacted yet.</div></div>` : `<div class="empty">Loading…</div>`;
+
+  const ot = openTodos.sort((a, b) => (a.due || "9999").localeCompare(b.due || "9999")).slice(0, 6);
+  $("ovTodos").innerHTML = ot.length ? ot.map(todoRow).join("") : `<div class="empty">No open to-dos. <a href="#todo">Add one</a>.</div>`;
+}
+const shortSchool = (s) => ({ "New York University": "NYU", "Teachers College, Columbia University": "TC Columbia", "University of Pennsylvania": "Penn", "Rutgers University–New Brunswick": "Rutgers", "CUNY Graduate Center": "CUNY" }[s] || s);
+
+// ================= programs =================
+function renderPrograms() {
+  if (!programs.length) { $("list").innerHTML = `<div class="empty">No programs yet. Click <b>+ Add program</b>, or <b>Import</b> a .json backup.</div>`; return; }
+  const sorted = [...programs].sort((a, b) => (a.deadline || "9999").localeCompare(b.deadline || "9999"));
   $("list").innerHTML = sorted.map((p) => {
     const d = daysLeft(p.deadline);
     const cls = d == null ? "" : d < 0 ? "past" : d <= 14 ? "soon" : "";
-    const dateStr = p.deadline ? new Date(p.deadline + "T12:00").toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "No date";
     const chips = DOCS.map(([k, l]) => `<button type="button" class="chip ${p[k] ? "done" : ""}" data-toggle="${k}" data-id="${p.id}">${p[k] ? "✓ " : ""}${l}</button>`).join("")
-      + `<button type="button" class="chip ${(p.lors || 0) >= 3 ? "done" : ""}" data-lor="${p.id}">Letters ${p.lors || 0}/3</button>`;
-    const portal = /^https?:\/\//.test(p.portal || "") ? ` · <a href="${esc(p.portal)}" target="_blank" rel="noopener">portal</a>` : "";
-    return `<div class="row">
-      <div class="due ${cls}"><b>${d == null ? "—" : d < 0 ? "past" : d}</b><small>${d != null && d >= 0 ? "days · " : ""}${esc(dateStr)}</small></div>
-      <div style="min-width:0">
-        <div class="name">${esc(p.school)}</div>
-        <div class="meta">${esc(p.program)}${p.fee ? " · $" + esc(p.fee) + " fee" : ""}${portal}</div>
-        <div class="checks">${chips}</div>
-        ${recvLine(p)}
-        ${p.notes ? `<div class="notes">${esc(p.notes)}</div>` : ""}
+      + `<button type="button" class="chip ${(p.lors || 0) >= 3 ? "done" : ""}" data-lor="${p.id}" title="Letters received. Click to change.">Letters ${p.lors || 0}/3</button>`;
+    const pis = facultyAt(p.school);
+    const got = lettersFor(p.school);
+    const portal = /^https?:\/\//.test(p.portal || "") ? `<a href="${esc(p.portal)}" target="_blank" rel="noopener">Official page ↗</a>` : "";
+    return `<article class="prog">
+      <div class="prog-main">
+        <div class="days ${cls}"><b>${d == null ? "—" : d < 0 ? "past" : d}</b><small>${esc(p.deadline ? fmtDate(p.deadline) : "no date")}</small></div>
+        <div style="min-width:0">
+          <div class="name">${esc(p.school)}</div>
+          <div class="sub">${esc(p.program)}${p.fee ? " · $" + esc(p.fee) + " fee" : ""}</div>
+          <div class="row2"><div class="chips">${chips}</div></div>
+          ${pis.length ? `<div class="row2"><span class="note">Faculty</span><div class="chips">${pis.map((f) => `<a class="chip" href="#faculty-${slug(f.name)}"><span class="pill st-${esc(f.status)}" style="padding:0 6px;font-size:10px;margin-right:4px">●</span>${esc(f.name)}</a>`).join("")}</div></div>` : ""}
+          ${got.length ? `<div class="recv" style="margin-top:6px">✓ Letters received: ${got.map((l) => `${esc(l.recommender)} (${esc(fmtDate(l.date))})`).join(", ")}</div>` : ""}
+        </div>
+        <div class="side">
+          <span class="pill s-${esc(p.status)}">${esc(p.status)}</span>
+          <div><button class="link" type="button" data-edit="${p.id}">Edit</button><button class="link" type="button" data-del="${p.id}">Delete</button></div>
+        </div>
       </div>
-      <div class="side">
-        <span class="pill s-${esc(p.status)}">${esc(p.status)}</span>
-        <div><button class="link" type="button" data-edit="${p.id}">Edit</button><button class="link" type="button" data-del="${p.id}">Delete</button></div>
-      </div>
-    </div>`;
+      ${p.notes || portal ? `<details><summary>Notes${portal ? " & links" : ""}</summary>${portal ? `<div style="margin-top:6px;font-size:13px">${portal}</div>` : ""}${p.notes ? `<div class="notes">${esc(p.notes)}</div>` : ""}</details>` : ""}
+    </article>`;
   }).join("");
 }
-
-async function persist() {
-  if (typeof applyLetterCounts === "function") applyLetterCounts();
-  render();
-  if (mode === "local") return localSave();
-  try { await api("/api/programs", { method: "PUT", body: JSON.stringify(programs) }); }
-  catch { $("list").insertAdjacentHTML("afterbegin", `<div class="empty">Couldn't save to the server. Check that it is running, then try again.</div>`); }
-}
-
 function showForm(p) {
-  editingId = p ? p.id : null;
+  const editingId = p ? p.id : null;
   p = p || { status: "Researching", lors: 0 };
   $("formSlot").innerHTML = `<form class="edit" id="editForm">
     <label>School<input id="f-school" required value="${esc(p.school)}"></label>
@@ -300,201 +477,277 @@ function showForm(p) {
     <label>Deadline<input id="f-deadline" type="date" value="${esc(p.deadline)}"></label>
     <label>Status<select id="f-status">${STATUSES.map((s) => `<option ${s === p.status ? "selected" : ""}>${s}</option>`).join("")}</select></label>
     <label>Application fee ($)<input id="f-fee" type="number" min="0" value="${esc(p.fee)}"></label>
-    <label>Portal link<input id="f-portal" type="url" value="${esc(p.portal)}" placeholder="https://"></label>
-    <label class="wide">Notes (advisors, requirements, thoughts)<textarea id="f-notes" rows="2">${esc(p.notes)}</textarea></label>
+    <label>Official page<input id="f-portal" type="url" value="${esc(p.portal)}" placeholder="https://"></label>
+    <label class="wide">Notes<textarea id="f-notes" rows="3">${esc(p.notes)}</textarea></label>
     <div class="actions"><button type="button" id="cancelEdit">Cancel</button><button class="primary" type="submit">${editingId ? "Save changes" : "Add program"}</button></div>
   </form>`;
   $("f-school").focus();
-  $("cancelEdit").onclick = () => { $("formSlot").innerHTML = ""; editingId = null; };
+  $("cancelEdit").onclick = () => { $("formSlot").innerHTML = ""; };
   $("editForm").onsubmit = (e) => {
     e.preventDefault();
-    const data = {
-      school: $("f-school").value.trim(), program: $("f-program").value.trim(), deadline: $("f-deadline").value,
-      status: $("f-status").value, fee: Number($("f-fee").value) || 0, portal: $("f-portal").value.trim(), notes: $("f-notes").value.trim(),
-    };
+    const data = { school: $("f-school").value.trim(), program: $("f-program").value.trim(), deadline: $("f-deadline").value,
+      status: $("f-status").value, fee: Number($("f-fee").value) || 0, portal: $("f-portal").value.trim(), notes: $("f-notes").value.trim() };
     if (editingId) Object.assign(programs.find((x) => x.id === editingId), data);
     else programs.push({ ...data, lors: 0, id: "p" + Date.now() });
-    $("formSlot").innerHTML = ""; editingId = null;
+    $("formSlot").innerHTML = "";
     persist();
   };
 }
-
 $("addBtn").onclick = () => showForm(null);
-
-// ---- Import / Export (.json) ----
-function flash(msg) {
-  const el = document.createElement("div"); el.className = "empty"; el.textContent = msg;
-  $("list").before(el); setTimeout(() => el.remove(), 5000);
-}
-$("exportBtn").onclick = () => {
-  const blob = new Blob([JSON.stringify({ programs, todos, diary }, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob); a.download = "phd-programs.json"; a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-};
-$("importBtn").onclick = () => $("importFile").click();
-$("importFile").onchange = async (e) => {
-  const file = e.target.files[0]; e.target.value = "";
-  if (!file) return;
-  let list;
-  try { list = JSON.parse(await file.text()); } catch { return flash("That file isn't valid JSON. Choose a .json file exported from this site."); }
-  let extra = "";
-  if (!Array.isArray(list) && list && typeof list === "object") {
-    // A full backup: { programs, todos, diary }. Merge to-dos and diary entries by id.
-    const mergeById = (mine, theirs) => { const ids = new Set(mine.map((x) => x.id)); const add = (Array.isArray(theirs) ? theirs : []).filter((x) => x && x.id && !ids.has(x.id)); mine.push(...add); return add.length; };
-    const nt = mergeById(todos, list.todos), nd = mergeById(diary, (list.diary || []).filter((d) => d.date && d.text));
-    if (nt) saveTodos(); if (nd) saveDiary();
-    if (nt || nd) extra = ` Also added ${nt} to-do${nt === 1 ? "" : "s"} and ${nd} diary entr${nd === 1 ? "y" : "ies"}.`;
-    list = Array.isArray(list.programs) ? list.programs : [];
-  }
-  if (!Array.isArray(list)) return flash("No programs found in that file.");
-  const key = (p) => (String(p.school || "") + "|" + String(p.program || "")).toLowerCase();
-  const have = new Set(programs.map(key));
-  let added = 0, skipped = 0;
-  list.forEach((p, i) => {
-    if (!p || typeof p !== "object" || !String(p.school || "").trim()) return;
-    if (have.has(key(p))) { skipped++; return; }
-    programs.push({
-      id: "p" + Date.now() + "-" + i,
-      school: String(p.school).trim(), program: String(p.program || ""), deadline: /^\d{4}-\d{2}-\d{2}$/.test(p.deadline || "") ? p.deadline : "",
-      status: STATUSES.includes(p.status) ? p.status : "Researching", fee: Number(p.fee) || 0,
-      portal: String(p.portal || ""), notes: String(p.notes || ""), lors: Math.min(3, Math.max(0, Number(p.lors) || 0)),
-      sop: !!p.sop, cv: !!p.cv, transcripts: !!p.transcripts, scores: !!p.scores,
-    });
-    have.add(key(p)); added++;
-  });
-  persist();
-  flash(`Imported ${added} program${added === 1 ? "" : "s"}` + (skipped ? `, skipped ${skipped} already in your list.` : ".") + extra);
-};
 $("list").addEventListener("click", (e) => {
   const t = e.target.closest("button"); if (!t) return;
   const find = (id) => programs.find((p) => p.id === id);
   if (t.dataset.toggle) { const p = find(t.dataset.id); p[t.dataset.toggle] = !p[t.dataset.toggle]; persist(); }
   else if (t.dataset.lor) { const p = find(t.dataset.lor); p.lors = ((p.lors || 0) + 1) % 4; persist(); }
-  else if (t.dataset.edit) showForm(find(t.dataset.edit));
+  else if (t.dataset.edit) { showForm(find(t.dataset.edit)); scrollTo({ top: 0 }); }
   else if (t.dataset.del) {
     if (t.dataset.confirm) { programs = programs.filter((p) => p.id !== t.dataset.del); persist(); }
     else { t.dataset.confirm = "1"; t.textContent = "Confirm delete"; t.style.color = "var(--bad)"; setTimeout(() => { if (t.isConnected) { delete t.dataset.confirm; t.textContent = "Delete"; t.style.color = ""; } }, 3000); }
   }
 });
 
-async function load() {
-  try { programs = await api("/api/programs"); mode = "server"; render(); }
-  catch {
-    if (!API_BASE) { // no server (e.g. GitHub Pages): keep everything in this browser
-      mode = "local"; programs = localLoad(); render();
-      if (status) syncLetterCounts(); // agent data may arrive before the list does
-      $("askNote").hidden = false;
-      $("askNote").textContent = "Your program list is saved in this browser.";
-    } else $("list").innerHTML = `<div class="empty">Couldn't reach the server. Make sure it is running.</div>`;
-  }
-}
-load();
-
-// ---- Ask panel (answers come from Hopscotch via the server) ----
-let history = [];
-function addMsg(role, text) {
-  const el = document.createElement("div"); el.className = "msg " + (role === "user" ? "user" : "bot"); el.textContent = text;
-  $("msgs").appendChild(el); $("msgs").scrollTop = $("msgs").scrollHeight; return el;
-}
-async function ask(q) {
-  q = q.trim(); if (!q) return;
-  addMsg("user", q); $("askInput").value = "";
-  history.push({ role: "user", content: q });
-  const bot = addMsg("bot", "Thinking…"); $("askBtn").disabled = true;
-  try {
-    const { answer } = await api("/api/ask", { method: "POST", body: JSON.stringify(mode === "local" ? { history, programs, todos: todos.filter((t) => !t.done) } : { history, todos: todos.filter((t) => !t.done) }) });
-    bot.textContent = answer; history.push({ role: "assistant", content: answer });
-  } catch (e) {
-    history.pop();
-    bot.textContent = e.code === 404 || e.code === "no_server" ? "Asking questions isn't connected on this site yet. Your list still works and is saved in this browser."
-      : "Couldn't get an answer: " + (typeof e.code === "string" ? e.code : "server error") + " Try again.";
-  } finally { $("askBtn").disabled = false; $("msgs").scrollTop = $("msgs").scrollHeight; }
-}
-$("askForm").onsubmit = (e) => { e.preventDefault(); ask($("askInput").value); };
-$("askInput").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask($("askInput").value); } });
-$("sugg").addEventListener("click", (e) => { if (e.target.tagName === "BUTTON") ask(e.target.textContent); });
-// ---- Agent data: letters received + email follow-ups (written daily by scheduled agents) ----
-let status = null; // { letters: {updated, schools: {name: [{recommender, date}]}}, emails: {updated, awaitingReply, needsReply} }
-const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-function lettersFor(p) {
-  const schools = status?.letters?.schools || {};
-  const n = norm(p.school);
-  const key = Object.keys(schools).find((k) => norm(k) === n) || Object.keys(schools).find((k) => n && (norm(k).includes(n) || n.includes(norm(k))));
-  return key ? schools[key] : [];
-}
-const fmtDate = (d) => d ? new Date(d + (d.length === 10 ? "T12:00" : "")).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
-function recvLine(p) {
-  const got = lettersFor(p);
-  if (!got.length) return "";
-  return `<div class="recv">✓ Letters received: ${got.map((l) => `${esc(l.recommender)}${l.date ? " (" + esc(fmtDate(l.date)) + ")" : ""}`).join(", ")}</div>`;
-}
-// Raise each program's letter count to what the agent saw (never lowers a count you set yourself).
-function applyLetterCounts() {
-  let changed = false;
-  programs.forEach((p) => { const n = Math.min(3, lettersFor(p).length); if (n > (p.lors || 0)) { p.lors = n; changed = true; } });
-  return changed;
-}
-function syncLetterCounts() { if (applyLetterCounts()) persist(); else render(); }
-const outlook = (u) => /^https:\/\/outlook\.(office365|office)\.com\//.test(u || "") ? `<a class="open" href="${esc(u)}" target="_blank" rel="noopener">Open in Outlook</a>` : "";
-function mailRows(list, kind) {
-  if (!list?.length) return `<div class="empty">${kind === "awaiting" ? "Nobody has kept you waiting a week. 🎉" : "You're all caught up."}</div>`;
-  return list.map((m) => `<div class="mail">
-    <span class="who">${esc(m.name || m.email)}</span>
-    <span class="age">${esc(m.days)}d ${kind === "awaiting" ? "waiting" : "ago"}</span>
-    <span class="subj">${esc(m.subject)}</span>
-    ${m.why ? `<span class="why">${esc(m.why)}</span>` : ""}
-    <span class="why">${esc(m.email || "")} · ${esc(fmtDate(m.date))} ${outlook(m.webLink)}</span>
-  </div>`).join("");
-}
-function renderEmail() {
-  if (!status) { ["awaiting", "needsReply", "lettersBox"].forEach((id) => $(id).innerHTML = `<div class="empty">The email agents haven't been connected to this site yet.</div>`); return; }
-  const em = status.emails || {};
-  $("awaiting").innerHTML = mailRows(em.awaitingReply, "awaiting");
-  $("needsReply").innerHTML = mailRows(em.needsReply, "needs");
-  const schools = status.letters?.schools || {};
-  const names = Object.keys(schools);
-  $("lettersBox").innerHTML = names.length ? `<table class="letters-table"><thead><tr><th>School</th><th>Count</th><th>From</th></tr></thead><tbody>${
-    names.map((s) => `<tr><td>${esc(s)}</td><td class="n">${schools[s].length}</td><td>${schools[s].map((l) => `${esc(l.recommender)}${l.date ? " · " + esc(fmtDate(l.date)) : ""}`).join("<br>")}</td></tr>`).join("")
-  }</tbody></table>` : `<div class="empty">No confirmation emails found yet.</div>`;
-  const ts = [status.letters?.updated, em.updated].filter(Boolean).sort().pop();
-  $("statusUpdated").textContent = ts ? "Last checked by the email agents: " + new Date(ts).toLocaleString() : "";
-  const n = (em.awaitingReply?.length || 0) + (em.needsReply?.length || 0);
-  $("mailCount").hidden = !n; $("mailCount").textContent = n;
-}
-async function loadStatus() {
-  // Written daily by the scheduled email agents (docs/data/ in this repo).
-  const get = (f) => fetch(f, { cache: "no-store" }).then((r) => r.ok ? r.json() : null).catch(() => null);
-  const [letters, emails] = await Promise.all([get("data/letters.json"), get("data/emails.json")]);
-  status = letters || emails ? { letters, emails } : null;
-  renderEmail();
-  if (status) syncLetterCounts();
-}
-
-// ---- To-do (saved in this browser) ----
-const store = {
-  get(k) { try { return JSON.parse(localStorage.getItem(k)) || []; } catch { return []; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+// import / export
+$("exportBtn").onclick = () => {
+  const blob = new Blob([JSON.stringify({ programs, todos, diary }, null, 2)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "phd-desk-backup.json"; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
-let todos = store.get("phd-todos");
-const saveTodos = () => { store.set("phd-todos", todos); renderTodos(); };
-const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+$("importBtn").onclick = () => $("importFile").click();
+$("importFile").onchange = async (e) => {
+  const file = e.target.files[0]; e.target.value = ""; if (!file) return;
+  let list; try { list = JSON.parse(await file.text()); } catch { return flash("That file isn't valid JSON. Choose a .json file exported from this site."); }
+  let extra = "";
+  if (!Array.isArray(list) && list && typeof list === "object") {
+    const mergeById = (mine, theirs) => { const ids = new Set(mine.map((x) => x.id)); const add = (Array.isArray(theirs) ? theirs : []).filter((x) => x && x.id && !ids.has(x.id)); mine.push(...add); return add.length; };
+    const nt = mergeById(todos, list.todos), nd = mergeById(diary, (list.diary || []).filter((d) => d && d.date && d.text));
+    if (nt) store.set("phd-todos", todos); if (nd) store.set("phd-diary", diary);
+    if (nt || nd) extra = ` Also added ${nt} to-do${nt === 1 ? "" : "s"} and ${nd} diary entr${nd === 1 ? "y" : "ies"}.`;
+    list = Array.isArray(list.programs) ? list.programs : [];
+  }
+  if (!Array.isArray(list)) return flash("No programs found in that file.");
+  const key = (p) => (String(p.school || "") + "|" + String(p.program || "")).toLowerCase();
+  const have = new Set(programs.map(key)); let added = 0, skipped = 0;
+  list.forEach((p, i) => {
+    if (!p || typeof p !== "object" || !String(p.school || "").trim()) return;
+    if (have.has(key(p))) { skipped++; return; }
+    programs.push({ id: "p" + Date.now() + "-" + i, school: String(p.school).trim(), program: String(p.program || ""),
+      deadline: /^\d{4}-\d{2}-\d{2}$/.test(p.deadline || "") ? p.deadline : "", status: STATUSES.includes(p.status) ? p.status : "Researching",
+      fee: Number(p.fee) || 0, portal: String(p.portal || ""), notes: String(p.notes || ""), lors: Math.min(3, Math.max(0, Number(p.lors) || 0)),
+      sop: !!p.sop, cv: !!p.cv, transcripts: !!p.transcripts, scores: !!p.scores });
+    have.add(key(p)); added++;
+  });
+  persist(); renderDiary();
+  flash(`Imported ${added} program${added === 1 ? "" : "s"}` + (skipped ? `, skipped ${skipped} already in your list.` : ".") + extra);
+};
+
+// ================= OpenAlex =================
+const OA = "https://api.openalex.org";
+const WEEK = 7 * 86400000;
+const cacheGet = (k) => { const v = store.get(k, null); return v && Date.now() - v.t < WEEK ? v.d : null; };
+const cacheSet = (k, d) => { if (!store.set(k, { t: Date.now(), d })) { try { Object.keys(localStorage).filter((x) => x.startsWith("oa-")).forEach((x) => localStorage.removeItem(x)); } catch {} store.set(k, { t: Date.now(), d }); } };
+const shortId = (id) => String(id || "").split("/").pop();
+const inflight = {};
+async function oaAuthor(f) {
+  const k = "oa-a2-" + slug(f.name), hit = cacheGet(k); if (hit) return hit;
+  if (inflight[k]) return inflight[k];
+  return (inflight[k] = (async () => {
+    let a;
+    if (f.openalex) a = await (await fetch(`${OA}/authors/${f.openalex}`)).json();
+    else {
+      const r = await fetch(`${OA}/authors?search=${encodeURIComponent(f.name)}&per-page=15`);
+      if (!r.ok) throw new Error("OpenAlex " + r.status);
+      const res = (await r.json()).results || [];
+      const re = f.match ? new RegExp(f.match, "i") : null;
+      const affs = (x) => [...(x.last_known_institutions || []).map((i) => i.display_name), ...(x.affiliations || []).map((i) => i.institution?.display_name)].filter(Boolean);
+      const ok = res.filter((x) => re && affs(x).some((n) => re.test(n)));
+      a = (ok.length ? ok : res).sort((x, y) => (y.works_count || 0) - (x.works_count || 0))[0];
+      if (!a) return null;
+      a._unverified = !ok.length;
+    }
+    const d = { id: shortId(a.id), name: a.display_name, works: a.works_count, cites: a.cited_by_count, h: a.summary_stats?.h_index,
+      inst: (a.last_known_institutions || []).map((i) => i.display_name), topics: (a.topics || []).slice(0, 10).map((t) => ({ n: t.display_name, c: t.count })),
+      unverified: !!a._unverified };
+    cacheSet(k, d); return d;
+  })().finally(() => delete inflight[k]));
+}
+async function oaWorks(authorId) {
+  const k = "oa-w2-" + authorId, hit = cacheGet(k); if (hit) return hit;
+  const sel = "id,doi,display_name,publication_year,publication_date,primary_location,cited_by_count,authorships,keywords,type";
+  const r = await fetch(`${OA}/works?filter=author.id:${authorId},from_publication_date:2016-01-01&sort=publication_date:desc&per-page=200&select=${sel}`);
+  if (!r.ok) throw new Error("OpenAlex " + r.status);
+  const res = (await r.json()).results || [];
+  const d = res.map((w) => ({ t: w.display_name, y: w.publication_year, doi: w.doi, v: w.primary_location?.source?.display_name || "", c: w.cited_by_count || 0, ty: w.type,
+    a: (w.authorships || []).map((x) => ({ id: shortId(x.author?.id), n: x.author?.display_name, i: (x.institutions || []).map((i) => i.display_name).filter(Boolean) })),
+    k: (w.keywords || []).filter((x) => (x.score ?? 1) >= 0.3).map((x) => x.display_name) })).filter((w) => w.t);
+  cacheSet(k, d); return d;
+}
+
+// ================= faculty list =================
+function renderFacultyList() {
+  if (!faculty.length) { $("facList").innerHTML = `<div class="empty">Loading faculty…</div>`; return; }
+  const order = [...new Set([...programs].sort((a, b) => (a.deadline || "9999").localeCompare(b.deadline || "9999")).map((p) => p.school).concat(faculty.map((f) => f.school)))];
+  const groups = order.map((s) => [s, faculty.filter((f) => f.school === s)]).filter(([, fs]) => fs.length);
+  $("facList").innerHTML = groups.map(([school, fs]) => `<section class="school-group"><h3>${esc(school)}</h3><div class="fac-grid">${fs.map((f) => {
+    const s = slug(f.name), c = cacheGet("oa-a2-" + s);
+    return `<a class="fac-card" href="#faculty-${s}" data-fac="${s}">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:start"><span class="n">${esc(f.name)}</span><span class="pill st-${esc(f.status)}">${esc(FAC_STATUS[f.status] || "")}</span></div>
+      <div class="p">${esc(f.program)}</div>
+      <div class="topics" data-topics="${s}">${c ? esc(c.topics.slice(0, 3).map((t) => t.n).join(" · ")) : ""}</div>
+      <div class="nums" data-nums="${s}">${c ? `${c.works} papers · ${c.cites} citations${c.h ? " · h " + c.h : ""}` : ""}</div>
+    </a>`;
+  }).join("")}</div></section>`).join("");
+  // fill topics in the background, 3 at a time
+  const queue = faculty.filter((f) => !cacheGet("oa-a2-" + slug(f.name)));
+  const worker = async () => { while (queue.length) { const f = queue.shift(); try { const c = await oaAuthor(f); const s = slug(f.name); const t = document.querySelector(`[data-topics="${s}"]`), n = document.querySelector(`[data-nums="${s}"]`); if (c && t) { t.textContent = c.topics.slice(0, 3).map((x) => x.n).join(" · "); n.textContent = `${c.works} papers · ${c.cites} citations${c.h ? " · h " + c.h : ""}`; } } catch {} } };
+  worker(); worker(); worker();
+}
+
+// ================= faculty detail =================
+const STOP = new Set("a an the of and or for to in on at by with from as is are be via its their our using use used based toward towards into through between among within across how what why when do does can study studies analysis approach new learning education educational student students case research".split(" "));
+function wordCloud(works) {
+  const score = new Map(), add = (w, s) => { const k = w.toLowerCase(); if (k.length < 3 || STOP.has(k)) return; const cur = score.get(k) || { w, s: 0 }; cur.s += s; score.set(k, cur); };
+  works.forEach((w) => {
+    w.k.forEach((k) => add(k, 2));
+    const toks = w.t.replace(/[^\p{L}\p{N}\s-]/gu, " ").split(/\s+/).filter(Boolean);
+    toks.forEach((t, i) => { if (!STOP.has(t.toLowerCase()) && t.length > 3) add(t, 0.6); const n = toks[i + 1]; if (n && !STOP.has(t.toLowerCase()) && !STOP.has(n.toLowerCase())) add(t + " " + n, 0.9); });
+  });
+  const top = [...score.values()].sort((a, b) => b.s - a.s).slice(0, 36);
+  if (!top.length) return `<div class="empty">Not enough titles to build a word cloud.</div>`;
+  const max = top[0].s, min = top[top.length - 1].s;
+  const colors = ["var(--c1)", "var(--c3)", "var(--c4)", "var(--c2)", "var(--c6)", "var(--fg)"];
+  const shuffled = top.map((x, i) => ({ ...x, r: i })).sort((a, b) => ((a.w.length * 7 + a.r * 13) % 11) - ((b.w.length * 7 + b.r * 13) % 11));
+  return `<div class="cloud">${shuffled.map((x) => { const f = max === min ? 1 : (Math.sqrt(x.s) - Math.sqrt(min)) / (Math.sqrt(max) - Math.sqrt(min)); return `<span style="font-size:${(13 + f * 22).toFixed(1)}px;color:${colors[x.r % colors.length]};opacity:${(0.6 + f * 0.4).toFixed(2)}" title="weight ${x.s.toFixed(1)}">${esc(x.w)}</span>`; }).join("")}</div>`;
+}
+function collaborators(works, meId) {
+  const people = new Map(), insts = new Map(), pairs = new Map();
+  works.forEach((w) => {
+    const co = w.a.filter((a) => a.id && a.id !== meId);
+    co.forEach((a) => {
+      const p = people.get(a.id) || { id: a.id, n: a.n, c: 0, last: 0, inst: new Map() };
+      p.c++; p.last = Math.max(p.last, w.y || 0); a.i.forEach((i) => p.inst.set(i, (p.inst.get(i) || 0) + 1)); people.set(a.id, p);
+    });
+    new Set(w.a.flatMap((a) => a.i)).forEach((i) => insts.set(i, (insts.get(i) || 0) + 1));
+    const ids = co.map((a) => a.id).slice(0, 12);
+    for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) { const k = [ids[i], ids[j]].sort().join("|"); pairs.set(k, (pairs.get(k) || 0) + 1); }
+  });
+  const list = [...people.values()].map((p) => ({ ...p, home: [...p.inst.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || "" })).sort((a, b) => b.c - a.c || b.last - a.last);
+  return { list, insts: [...insts.entries()].sort((a, b) => b[1] - a[1]), pairs };
+}
+function drawNetwork(box, me, collab) {
+  if (!window.d3) { box.innerHTML = `<div class="empty">The network chart couldn't load. Check your connection and refresh.</div>`; return; }
+  const top = collab.list.slice(0, 22);
+  if (!top.length) { box.innerHTML = `<div class="empty">No co-authors found in these papers.</div>`; return; }
+  const instRank = [...new Set(top.map((p) => p.home).filter(Boolean))].slice(0, 6);
+  const colorOf = (inst) => { const i = instRank.indexOf(inst); return i < 0 ? "var(--c0)" : `var(--c${i + 1})`; };
+  const ids = new Set(top.map((p) => p.id));
+  const nodes = [{ id: "me", n: me.name, c: Math.max(...top.map((p) => p.c)) + 2, me: true }, ...top.map((p) => ({ id: p.id, n: p.n, c: p.c, home: p.home }))];
+  const links = top.map((p) => ({ source: "me", target: p.id, w: p.c }));
+  collab.pairs.forEach((w, k) => { const [a, b] = k.split("|"); if (ids.has(a) && ids.has(b)) links.push({ source: a, target: b, w, peer: true }); });
+  const W = 680, H = 440;
+  box.innerHTML = "";
+  const svg = d3.select(box).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img").attr("aria-label", `Co-author network of ${me.name}`);
+  const r = (d) => d.me ? 16 : 5 + Math.sqrt(d.c) * 3.2;
+  const sim = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).id((d) => d.id).distance((l) => l.peer ? 90 : 150 - Math.min(80, l.w * 10)).strength((l) => l.peer ? 0.15 : 0.6))
+    .force("charge", d3.forceManyBody().strength(-260)).force("center", d3.forceCenter(W / 2, H / 2))
+    .force("collide", d3.forceCollide().radius((d) => r(d) + 4)).stop();
+  for (let i = 0; i < 300; i++) sim.tick();
+  nodes.forEach((d) => { d.x = Math.max(r(d) + 4, Math.min(W - r(d) - 4, d.x)); d.y = Math.max(r(d) + 14, Math.min(H - r(d) - 4, d.y)); });
+  svg.append("g").selectAll("line").data(links).join("line").attr("x1", (d) => d.source.x).attr("y1", (d) => d.source.y).attr("x2", (d) => d.target.x).attr("y2", (d) => d.target.y)
+    .attr("stroke-width", (d) => d.peer ? 0.8 : Math.min(5, 0.8 + d.w * 0.6)).attr("stroke-dasharray", (d) => d.peer ? "3 3" : null);
+  const tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; box.appendChild(tip);
+  svg.append("g").selectAll("circle").data(nodes).join("circle").attr("cx", (d) => d.x).attr("cy", (d) => d.y).attr("r", r)
+    .attr("style", (d) => `fill:${d.me ? "var(--fg)" : colorOf(d.home)};stroke:var(--surface);stroke-width:1.5px`)
+    .on("mousemove", (ev, d) => { const b = box.getBoundingClientRect(); tip.hidden = false; tip.style.left = Math.min(ev.clientX - b.left + 12, b.width - 250) + "px"; tip.style.top = (ev.clientY - b.top + 12) + "px"; tip.textContent = d.me ? d.n : `${d.n} · ${d.c} joint paper${d.c > 1 ? "s" : ""}${d.home ? " · " + d.home : ""}`; })
+    .on("mouseleave", () => { tip.hidden = true; });
+  const labelled = new Set(["me", ...top.slice(0, 10).map((p) => p.id)]);
+  svg.append("g").selectAll("text").data(nodes.filter((d) => labelled.has(d.id))).join("text").attr("x", (d) => d.x).attr("y", (d) => d.y - r(d) - 4).attr("text-anchor", "middle")
+    .style("font-weight", (d) => d.me ? 600 : 400).text((d) => d.n);
+  const leg = document.createElement("div"); leg.className = "legend";
+  leg.innerHTML = instRank.map((n, i) => `<span><i style="background:var(--c${i + 1})"></i>${esc(n)}</span>`).join("") + `<span><i style="background:var(--c0)"></i>Other</span><span>Dashed line: co-authors who also wrote together</span>`;
+  box.after(leg);
+}
+async function renderPerson(s) {
+  const f = faculty.find((x) => slug(x.name) === s), v = $("view-person");
+  if (!f) { v.innerHTML = faculty.length ? `<a class="back" href="#faculty">← All faculty</a><div class="empty">That person isn't in your faculty list.</div>` : `<div class="loading">Loading…</div>`; return; }
+  const mail = [...(emails?.awaitingReply || []).map((m) => ({ ...m, kind: "You're waiting on their reply" })), ...(emails?.needsReply || []).map((m) => ({ ...m, kind: "They're waiting on your reply" }))]
+    .filter((m) => f.email && norm(m.email) === norm(f.email));
+  const scholar = `https://scholar.google.com/scholar?q=${encodeURIComponent('author:"' + f.name + '"')}`;
+  v.innerHTML = `<a class="back" href="#faculty">← All faculty</a>
+    <section class="panel"><div class="panel-body" style="display:grid;gap:12px">
+      <div class="fac-head"><div class="who"><h2 style="font-size:26px">${esc(f.name)}</h2><div class="note" style="font-size:14px">${esc(f.school)} · ${esc(f.program)}</div><div class="note" id="pAff"></div></div>
+        <span class="pill st-${esc(f.status)}" style="font-size:13px">${esc(FAC_STATUS[f.status] || "")}</span></div>
+      ${f.contact || mail.length ? `<div class="contact-box">${f.contact ? `<div>${esc(f.contact)}</div>` : ""}${mail.map((m) => `<div style="margin-top:4px"><b>${esc(m.kind)}:</b> "${esc(m.subject)}" · ${esc(m.days)}d${m.why ? " · " + esc(m.why) : ""}</div>`).join("")}</div>` : ""}
+      <div class="links">${f.email ? `<span>✉ <span style="user-select:all">${esc(f.email)}</span></span>` : ""}<a href="${scholar}" target="_blank" rel="noopener">Google Scholar ↗</a><span id="pOa"></span>
+        <button class="link" type="button" id="pAsk" style="padding:0;color:var(--accent)">✦ Ask AI about ${esc(f.name.split(" ")[0])}'s research</button></div>
+    </div></section>
+    <div class="stats" id="pStats"></div>
+    <div class="grid2">
+      <section class="panel"><div class="panel-head"><h2>Research directions</h2><span class="note">From paper keywords and titles since 2016</span></div><div id="pCloud"><div class="loading">Loading papers…</div></div></section>
+      <section class="panel"><div class="panel-head"><h2>Main topics</h2><span class="note">OpenAlex topics, all years</span></div><div id="pTopics"><div class="loading">Loading…</div></div>
+        <div style="border-top:1px solid var(--line)"><div class="panel-head" style="border:0;padding-bottom:0"><h3>Papers per year</h3></div><div class="years" id="pYears"></div><div style="height:12px"></div></div></section>
+    </div>
+    <section class="panel"><div class="panel-head"><h2>Collaboration network</h2><span class="note">Top co-authors since 2016, sized by joint papers, colored by institution</span></div><div id="netBox"><div class="loading">Loading…</div></div></section>
+    <div class="grid2">
+      <section class="panel"><div class="panel-head"><h2>Frequent collaborators</h2></div><div class="tablewrap" id="pCollab"><div class="loading">Loading…</div></div></section>
+      <section class="panel"><div class="panel-head"><h2>Collaborating institutions</h2><span class="note">Papers involving each institution</span></div><div id="pInst"><div class="loading">Loading…</div></div></section>
+    </div>
+    <section class="panel"><div class="panel-head"><h2>Recent papers</h2><input id="pFilter" placeholder="Filter by word…" aria-label="Filter papers" style="width:min(240px,100%)"></div><div class="papers" id="pPapers"><div class="loading">Loading…</div></div></section>`;
+  $("pAsk").onclick = () => openAsk();
+  setAskContext(f, null, null);
+  let a, works;
+  try { a = await oaAuthor(f); } catch { a = undefined; }
+  if (location.hash !== "#faculty-" + s) return;
+  const fail = (msg) => ["pCloud", "pTopics", "netBox", "pCollab", "pInst", "pPapers"].forEach((id) => { $(id).innerHTML = `<div class="empty">${msg}</div>`; });
+  if (a === undefined) return fail("Couldn't reach OpenAlex. Check your connection and refresh.");
+  if (!a) return fail("No OpenAlex profile found for this name.");
+  $("pAff").innerHTML = esc(a.inst.join(", ") || "") + (a.unverified ? ` <span style="color:var(--warn)">· couldn't confirm this is the right person, check the papers</span>` : "");
+  $("pOa").innerHTML = `<a href="https://openalex.org/authors/${esc(a.id)}" target="_blank" rel="noopener">OpenAlex profile ↗</a>`;
+  $("pTopics").innerHTML = a.topics.length ? `<div class="bars">${a.topics.slice(0, 8).map((t) => `<div class="bar"><span class="lbl" title="${esc(t.n)}">${esc(t.n)}</span><span class="v">${t.c}</span><div class="track"><div class="fill" style="width:${(t.c / a.topics[0].c * 100).toFixed(0)}%"></div></div></div>`).join("")}</div>` : `<div class="empty">No topics listed.</div>`;
+  try { works = await oaWorks(a.id); } catch { works = null; }
+  if (location.hash !== "#faculty-" + s) return;
+  if (!works) return ["pCloud", "netBox", "pCollab", "pInst", "pPapers"].forEach((id) => { $(id).innerHTML = `<div class="empty">Couldn't load papers from OpenAlex. Refresh to try again.</div>`; });
+  const since20 = works.filter((w) => w.y >= 2020).length;
+  $("pStats").innerHTML = [[a.works, "Papers, all time"], [since20, "Papers since 2020"], [a.cites?.toLocaleString(), "Citations"], [a.h ?? "—", "h-index"]].map(([v2, l]) => `<div class="stat"><b>${esc(v2)}</b><span>${l}</span></div>`).join("");
+  $("pCloud").innerHTML = wordCloud(works);
+  const yrs = []; for (let y = 2016; y <= new Date().getFullYear(); y++) yrs.push([y, works.filter((w) => w.y === y).length]);
+  const ym = Math.max(1, ...yrs.map((x) => x[1]));
+  $("pYears").innerHTML = yrs.map(([y, n]) => `<div title="${y}: ${n} papers"><em>${n || ""}</em><i style="height:${(n / ym * 60).toFixed(0)}px"></i><span>${String(y).slice(2)}</span></div>`).join("");
+  const col = collaborators(works, a.id);
+  drawNetwork($("netBox"), a, col);
+  $("pCollab").innerHTML = col.list.length ? `<table class="collab"><thead><tr><th>Co-author</th><th>Joint</th><th>Last</th><th>Institution</th></tr></thead><tbody>${col.list.slice(0, 15).map((p) => `<tr><td>${esc(p.n)}</td><td class="n">${p.c}</td><td class="n">${p.last || ""}</td><td>${esc(p.home)}</td></tr>`).join("")}</tbody></table>` : `<div class="empty">No co-authors found.</div>`;
+  const im = col.insts[0]?.[1] || 1, mine = new Set(a.inst);
+  $("pInst").innerHTML = col.insts.length ? `<div class="bars">${col.insts.slice(0, 12).map(([n, c]) => `<div class="bar"><span class="lbl" title="${esc(n)}">${esc(n)}${mine.has(n) ? ' <span class="note">(home)</span>' : ""}</span><span class="v">${c}</span><div class="track"><div class="fill" style="width:${(c / im * 100).toFixed(0)}%;${mine.has(n) ? "background:var(--muted)" : ""}"></div></div></div>`).join("")}</div>` : `<div class="empty">No institutions listed.</div>`;
+  const drawPapers = () => {
+    const q = $("pFilter").value.trim().toLowerCase();
+    const list = works.filter((w) => !q || w.t.toLowerCase().includes(q) || w.k.join(" ").toLowerCase().includes(q) || w.v.toLowerCase().includes(q));
+    const lim = showAllPapers || q ? 200 : 20;
+    $("pPapers").innerHTML = list.length ? list.slice(0, lim).map((w) => `<div class="paper"><span class="y">${w.y || ""}</span><div>
+      <div class="t">${w.doi ? `<a href="${esc(w.doi)}" target="_blank" rel="noopener">${esc(w.t)}</a>` : esc(w.t)}</div>
+      <div class="m">${w.a.slice(0, 8).map((x) => x.id === a.id ? `<b>${esc(x.n)}</b>` : esc(x.n)).join(", ")}${w.a.length > 8 ? ` +${w.a.length - 8}` : ""}</div>
+      <div class="m">${esc(w.v)}${w.v ? " · " : ""}${w.c} citation${w.c === 1 ? "" : "s"}</div></div></div>`).join("") + (list.length > lim ? `<div class="empty"><button type="button" id="pMore">Show all ${list.length} papers</button></div>` : "")
+      : `<div class="empty">No papers match.</div>`;
+  };
+  let showAllPapers = false;
+  $("pPapers").addEventListener("click", (e) => { if (e.target.id === "pMore") { showAllPapers = true; drawPapers(); } });
+  $("pFilter").oninput = drawPapers; drawPapers();
+  setAskContext(f, a, works, col);
+}
+
+// ================= to-do =================
 function todoRow(t) {
   const d = daysLeft(t.due);
-  const due = t.due ? `<span class="${!t.done && d < 0 ? "late" : !t.done && d <= 2 ? "soon" : ""}">${d < 0 && !t.done ? "Overdue · " : ""}${esc(fmtDate(t.due))}</span>` : "";
+  const due = t.due ? `<span class="${!t.done && d < 0 ? "late" : !t.done && d <= 2 ? "soonx" : ""}">${!t.done && d < 0 ? "Overdue · " : ""}${esc(fmtDate(t.due))}</span>` : "";
   const meta = [due, t.school ? esc(t.school) : ""].filter(Boolean).join(" · ");
-  return `<div class="todo ${t.done ? "done" : ""}">
-    <input type="checkbox" data-todo="${t.id}" ${t.done ? "checked" : ""} aria-label="Mark done">
+  return `<div class="todo ${t.done ? "done" : ""}"><input type="checkbox" data-todo="${t.id}" ${t.done ? "checked" : ""} aria-label="Mark done">
     <div><div class="t">${esc(t.text)}</div>${meta ? `<div class="tm">${meta}</div>` : ""}</div>
-    <button class="link" type="button" data-deltodo="${t.id}" aria-label="Delete task">✕</button>
-  </div>`;
+    <button class="link" type="button" data-deltodo="${t.id}" aria-label="Delete task">✕</button></div>`;
 }
 function renderTodos() {
   const open = todos.filter((t) => !t.done).sort((a, b) => (a.due || "9999").localeCompare(b.due || "9999"));
   const done = todos.filter((t) => t.done).sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
-  $("todoList").innerHTML = !todos.length ? `<div class="empty">No tasks yet. Add your first one above, e.g. "Finish SOP draft for NYU".</div>`
-    : (open.length ? open.map(todoRow).join("") : `<div class="empty">Everything's done. 🎉</div>`)
-      + (done.length ? `<div class="group-label">Finished (${done.length})</div>` + done.map(todoRow).join("") : "");
+  $("todoList").innerHTML = !todos.length ? `<div class="empty">No tasks yet. Add one above, e.g. "Finish SOP draft for NYU".</div>`
+    : (open.length ? open.map(todoRow).join("") : `<div class="empty">Everything's done. 🎉</div>`) + (done.length ? `<div class="group-label">Finished (${done.length})</div>` + done.map(todoRow).join("") : "");
   $("todoCount").hidden = !open.length; $("todoCount").textContent = open.length;
   fillSchools();
 }
@@ -502,46 +755,34 @@ function fillSchools() {
   const sel = $("todoSchool"), cur = sel.value;
   sel.innerHTML = `<option value="">No school</option>` + [...new Set(programs.map((p) => p.school))].map((s) => `<option ${s === cur ? "selected" : ""}>${esc(s)}</option>`).join("");
 }
-$("todoSchool").addEventListener("focus", fillSchools);
 $("todoForm").onsubmit = (e) => {
   e.preventDefault();
   todos.push({ id: "t" + Date.now(), text: $("todoText").value.trim(), due: $("todoDue").value, school: $("todoSchool").value, done: false });
   $("todoText").value = ""; $("todoDue").value = ""; $("todoSchool").value = ""; $("todoText").focus();
   saveTodos();
 };
-$("todoList").addEventListener("click", (e) => {
+document.addEventListener("click", (e) => {
   const cb = e.target.closest("[data-todo]"), del = e.target.closest("[data-deltodo]");
-  if (cb) { const t = todos.find((x) => x.id === cb.dataset.todo); t.done = cb.checked; t.doneAt = cb.checked ? Date.now() : 0; saveTodos(); }
+  if (cb) { const t = todos.find((x) => x.id === cb.dataset.todo); if (t) { t.done = cb.checked; t.doneAt = cb.checked ? Date.now() : 0; saveTodos(); } }
   if (del) { todos = todos.filter((x) => x.id !== del.dataset.deltodo); saveTodos(); }
 });
 $("clearDone").onclick = () => { todos = todos.filter((t) => !t.done); saveTodos(); };
-renderTodos();
 
-// ---- Diary (saved in this browser only) ----
-let diary = store.get("phd-diary");
+// ================= diary =================
 let editingEntry = null;
-const saveDiary = () => { store.set("phd-diary", diary); renderDiary(); };
 function renderDiary() {
   const list = [...diary].sort((a, b) => b.date.localeCompare(a.date) || (b.created || 0) - (a.created || 0));
-  $("diaryList").innerHTML = list.length ? list.map((d) => `<article class="entry">
-      <div class="entry-head">
-        <span class="entry-date">${esc(new Date(d.date + "T12:00").toLocaleDateString(undefined, { weekday: "short", month: "long", day: "numeric", year: "numeric" }))}</span>
-        <span><button class="link" type="button" data-editentry="${d.id}">Edit</button><button class="link" type="button" data-delentry="${d.id}">Delete</button></span>
-      </div>
-      <div class="entry-body">${esc(d.text)}</div>
-    </article>`).join("") : `<div class="empty">No entries yet. Write a few lines about today above.</div>`;
-  const n = diary.length, streakDays = new Set(diary.map((d) => d.date));
-  let streak = 0; const c = new Date(today() + "T12:00");
-  while (streakDays.has(c.toISOString().slice(0, 10))) { streak++; c.setDate(c.getDate() - 1); }
-  $("diaryHint").textContent = n ? `${n} entr${n === 1 ? "y" : "ies"}${streak > 1 ? ` · ${streak}-day streak` : ""}` : "";
+  $("diaryList").innerHTML = list.length ? list.map((d) => `<article class="entry"><div class="entry-head">
+      <span class="entry-date">${esc(fmtDate(d.date, { weekday: "short", month: "long", day: "numeric", year: "numeric" }))}</span>
+      <span><button class="link" type="button" data-editentry="${d.id}">Edit</button><button class="link" type="button" data-delentry="${d.id}">Delete</button></span></div>
+      <div class="entry-body">${esc(d.text)}</div></article>`).join("") : `<div class="empty">No entries yet. Write a few lines about today above.</div>`;
+  const days = new Set(diary.map((d) => d.date)); let streak = 0; const c = new Date(today() + "T12:00");
+  while (days.has(c.toISOString().slice(0, 10))) { streak++; c.setDate(c.getDate() - 1); }
+  $("diaryHint").textContent = diary.length ? `${diary.length} entr${diary.length === 1 ? "y" : "ies"}${streak > 1 ? ` · ${streak}-day streak` : ""}` : "";
 }
-function resetDiaryForm() {
-  editingEntry = null; $("diaryText").value = ""; $("diaryDate").value = today();
-  $("diarySave").textContent = "Save entry"; $("diaryCancel").hidden = true;
-}
+function resetDiaryForm() { editingEntry = null; $("diaryText").value = ""; $("diaryDate").value = today(); $("diarySave").textContent = "Save entry"; $("diaryCancel").hidden = true; }
 $("diaryForm").onsubmit = (e) => {
-  e.preventDefault();
-  const text = $("diaryText").value.trim(); if (!text) return;
+  e.preventDefault(); const text = $("diaryText").value.trim(); if (!text) return;
   if (editingEntry) Object.assign(diary.find((d) => d.id === editingEntry), { date: $("diaryDate").value, text });
   else diary.push({ id: "d" + Date.now(), date: $("diaryDate").value, text, created: Date.now() });
   resetDiaryForm(); saveDiary();
@@ -549,31 +790,100 @@ $("diaryForm").onsubmit = (e) => {
 $("diaryCancel").onclick = resetDiaryForm;
 $("diaryList").addEventListener("click", (e) => {
   const ed = e.target.closest("[data-editentry]"), del = e.target.closest("[data-delentry]");
-  if (ed) {
-    const d = diary.find((x) => x.id === ed.dataset.editentry); editingEntry = d.id;
-    $("diaryDate").value = d.date; $("diaryText").value = d.text; $("diaryText").focus();
-    $("diarySave").textContent = "Save changes"; $("diaryCancel").hidden = false;
-  }
+  if (ed) { const d = diary.find((x) => x.id === ed.dataset.editentry); editingEntry = d.id; $("diaryDate").value = d.date; $("diaryText").value = d.text; $("diaryText").focus(); $("diarySave").textContent = "Save changes"; $("diaryCancel").hidden = false; }
   if (del) {
     if (del.dataset.confirm) { diary = diary.filter((x) => x.id !== del.dataset.delentry); saveDiary(); }
     else { del.dataset.confirm = "1"; del.textContent = "Confirm delete"; del.style.color = "var(--bad)"; setTimeout(() => { if (del.isConnected) { delete del.dataset.confirm; del.textContent = "Delete"; del.style.color = ""; } }, 3000); }
   }
 });
-resetDiaryForm(); renderDiary();
 
-const VIEWS = ["programs", "todo", "diary", "email"];
+// ================= email =================
+function renderEmail() {
+  const facBy = (addr) => faculty.find((f) => f.email && norm(f.email) === norm(addr));
+  const rows = (list, kind) => !list?.length ? `<div class="empty">${kind === "aw" ? "Nobody has kept you waiting a week. 🎉" : "You're all caught up."}</div>` : list.map((m) => {
+    const f = facBy(m.email), link = /^https:\/\/outlook\.(office365|office)\.com\//.test(m.webLink || "") ? ` · <a href="${esc(m.webLink)}" target="_blank" rel="noopener">Open in Outlook</a>` : "";
+    return `<div class="mail"><span class="who">${f ? `<a href="#faculty-${slug(f.name)}">${esc(m.name)}</a>` : esc(m.name || m.email)}</span><span class="age">${esc(m.days)}d ${kind === "aw" ? "waiting" : "ago"}</span>
+      <span class="subj">${esc(m.subject)}</span>${m.why ? `<span class="why">${esc(m.why)}</span>` : ""}<span class="why">${esc(m.email || "")} · ${esc(fmtDate(m.date))}${link}</span></div>`;
+  }).join("");
+  $("awaiting").innerHTML = emails ? rows(emails.awaitingReply, "aw") : `<div class="empty">The email agents haven't written anything yet.</div>`;
+  $("needsReply").innerHTML = emails ? rows(emails.needsReply, "nr") : "";
+  const ts = [letters?.updated, emails?.updated].filter(Boolean).sort().pop();
+  $("statusUpdated").textContent = ts ? "Last checked by the email agents: " + new Date(ts).toLocaleString() : "";
+  const n = (emails?.awaitingReply?.length || 0) + (emails?.needsReply?.length || 0);
+  $("mailCount").hidden = !n; $("mailCount").textContent = n;
+}
+
+// ================= Ask drawer =================
+let history = [], askContext = null;
+const DEFAULT_SUGG = ["What should I focus on this week?", "Which programs are still missing letters?", "Which faculty should I follow up with?"];
+function setSugg(list) { $("sugg").innerHTML = list.map((s) => `<button type="button">${esc(s)}</button>`).join(""); }
+function setAskContext(f, a, works, col) {
+  if (!f) { askContext = null; $("askCtx").hidden = true; setSugg(DEFAULT_SUGG); return; }
+  const lines = [`Faculty member: ${f.name}, ${f.school}, ${f.program}. Contact status: ${FAC_STATUS[f.status]}. ${f.contact || ""}`];
+  if (a) lines.push(`OpenAlex: ${a.works} papers, ${a.cites} citations, h-index ${a.h}. Main topics: ${a.topics.map((t) => t.n).join("; ")}.`);
+  if (works) lines.push("Recent papers:\n" + works.slice(0, 25).map((w) => `- (${w.y}) ${w.t}${w.v ? " — " + w.v : ""}`).join("\n"));
+  if (col) lines.push("Frequent co-authors: " + col.list.slice(0, 10).map((p) => `${p.n} (${p.c}, ${p.home})`).join("; "));
+  askContext = lines.join("\n").slice(0, 6000);
+  $("askCtx").hidden = false; $("askCtx").textContent = `Context: ${f.name}'s profile and recent papers`;
+  const first = f.name.split(" ")[0];
+  setSugg([`Summarize ${first}'s research direction in 5 bullet points`, `How does my background fit ${first}'s work?`, `Draft a short follow-up email to ${first}`]);
+}
+function openAsk() { $("askDrawer").classList.add("open"); $("askDrawer").inert = false; $("askToggle").setAttribute("aria-expanded", "true"); setTimeout(() => $("askInput").focus(), 50); }
+function closeAsk() { $("askDrawer").classList.remove("open"); $("askDrawer").inert = true; $("askToggle").setAttribute("aria-expanded", "false"); }
+$("askToggle").onclick = () => $("askDrawer").classList.contains("open") ? closeAsk() : openAsk();
+$("askClose").onclick = closeAsk;
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAsk(); });
+function addMsg(role, text) { const el = document.createElement("div"); el.className = "msg " + (role === "user" ? "user" : "bot"); el.textContent = text; $("msgs").appendChild(el); $("msgs").scrollTop = $("msgs").scrollHeight; return el; }
+async function ask(q) {
+  q = q.trim(); if (!q) return;
+  addMsg("user", q); $("askInput").value = "";
+  history.push({ role: "user", content: q });
+  const bot = addMsg("bot", "Thinking…"); $("askBtn").disabled = true;
+  const facSummary = faculty.map((f) => `${f.name} (${f.school}): ${FAC_STATUS[f.status]}${f.contact ? " — " + f.contact : ""}`).join("\n");
+  const ctx = [askContext, "All faculty contacts:\n" + facSummary].filter(Boolean).join("\n\n");
+  try {
+    const body = { history, todos: todos.filter((t) => !t.done), context: ctx };
+    if (mode === "local") body.programs = programs;
+    const { answer } = await api("/api/ask", { method: "POST", body: JSON.stringify(body) });
+    bot.textContent = answer; history.push({ role: "assistant", content: answer });
+  } catch (e) {
+    history.pop();
+    bot.textContent = e.code === 404 || e.code === "no_server" ? "Asking questions isn't connected on this site yet." : "Couldn't get an answer (" + (typeof e.code === "string" ? e.code : "server error") + "). Try again.";
+  } finally { $("askBtn").disabled = false; $("msgs").scrollTop = $("msgs").scrollHeight; }
+}
+$("askForm").onsubmit = (e) => { e.preventDefault(); ask($("askInput").value); };
+$("askInput").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask($("askInput").value); } });
+$("sugg").addEventListener("click", (e) => { if (e.target.tagName === "BUTTON") ask(e.target.textContent); });
+$("clearChat").onclick = () => { history = []; $("msgs").innerHTML = '<div class="msg bot">Cleared. What would you like to know?</div>'; };
+setSugg(DEFAULT_SUGG);
+
+// ================= routing =================
 function route() {
-  const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "programs";
-  VIEWS.forEach((name) => {
-    $("view-" + name).hidden = name !== v;
-    $("tab-" + name).setAttribute("aria-current", name === v ? "page" : "false");
-  });
+  const h = location.hash.slice(1) || "overview";
+  const person = h.startsWith("faculty-") ? h.slice(8) : null;
+  const v = person ? "person" : ["overview", "programs", "faculty", "todo", "diary", "email"].includes(h) ? h : "overview";
+  document.querySelectorAll(".view").forEach((el) => { el.hidden = el.id !== "view-" + v; });
+  document.querySelectorAll("nav.tabs a").forEach((a) => a.setAttribute("aria-current", a.dataset.tab === (person ? "faculty" : v) ? "page" : "false"));
+  if (person) renderPerson(person); else setAskContext(null);
+  if (v === "faculty") renderFacultyList();
+  if (person || v !== "overview") scrollTo({ top: 0 });
+}
+function renderAll() {
+  renderOverview(); renderPrograms(); renderTodos(); renderEmail();
+  if (!$("view-faculty").hidden) renderFacultyList();
 }
 window.addEventListener("hashchange", route);
-route();
-loadStatus();
 
-$("clearChat").onclick =() => { history = []; $("msgs").innerHTML = '<div class="msg bot">Cleared. What would you like to know?</div>'; };
+// ================= boot =================
+(async () => {
+  resetDiaryForm(); renderDiary(); renderAll(); route();
+  const [l, em, fac, prof] = await Promise.all([getJson("data/letters.json"), getJson("data/emails.json"), getJson("data/faculty.json"), getJson("data/profile.json")]);
+  letters = l; emails = em; faculty = fac?.faculty || []; if (prof) profile = prof;
+  try { programs = await api("/api/programs"); mode = "server"; }
+  catch { mode = "local"; programs = store.get("phd-programs"); }
+  if (applyLetterCounts()) persist(); else renderAll();
+  route();
+})();
 </script>
 </body>
 </html>

@@ -1,0 +1,44 @@
+{
+  "_help": "Faculty shown on the Faculty tab. 'match' is a regex checked against OpenAlex affiliations to pick the right person; set 'openalex' (e.g. \"A5012345678\") to pin a profile if the wrong one is found. status: taking | replied | waiting | not-taking | none.",
+  "faculty": [
+    { "name": "Xavier Ochoa", "school": "New York University", "program": "PhD, Educational Communication and Technology", "match": "New York|NYU|Escuela Superior Polit", "email": "xavier.ochoa@nyu.edu", "status": "waiting",
+      "contact": "Emailed Nov 3 and Nov 11, no reply yet. His PhD student Xiaomeng Huang met you Nov 5 and offered to talk to him about research opportunities." },
+    { "name": "Xiaomeng Huang", "school": "New York University", "program": "PhD student in Ochoa's group (contact)", "match": "New York|NYU", "email": "xiaomeng.huang@nyu.edu", "status": "replied",
+      "contact": "Met Nov 5. Studies AI-mediated collaboration and collaborative skill assessment. You'll be in New York in December and offered to meet." },
+    { "name": "Sarah W. Beck", "school": "New York University", "program": "PhD, Teaching and Learning", "match": "New York|NYU", "email": "sarah.beck@nyu.edu", "status": "not-taking",
+      "contact": "Nov 11: doesn't anticipate accepting a student this cycle, though it may change. Encouraged you to apply." },
+    { "name": "Kongji Qin", "school": "New York University", "program": "PhD, Applied Linguistics and Multilingual Education", "match": "New York|NYU", "status": "none" },
+    { "name": "Lorena Llosa", "school": "New York University", "program": "PhD, Applied Linguistics and Multilingual Education", "match": "New York|NYU", "status": "none" },
+
+    { "name": "Hansun Zhang Waring", "school": "Teachers College, Columbia University", "program": "EdD, Applied Linguistics (Language & Technology)", "match": "Columbia|Teachers College", "status": "waiting",
+      "contact": "Marked as emailed in your spreadsheet." },
+    { "name": "Paulo Blikstein", "school": "Teachers College, Columbia University", "program": "PhD, Technology, Media and Learning", "match": "Columbia|Teachers College|Stanford", "email": "pb2755@tc.columbia.edu", "status": "waiting",
+      "contact": "Emailed Nov 11." },
+
+    { "name": "Bodong Chen", "school": "University of Pennsylvania", "program": "PhD, Learning Sciences and Technologies (LST)", "match": "Pennsylvania|Minnesota", "email": "cbd@upenn.edu", "status": "taking",
+      "contact": "Nov 11: taking new PhD students for Fall 2027 and sees a strong fit with your CV. Nov 12: only admits students through the LST program." },
+    { "name": "Shiyan Jiang", "school": "University of Pennsylvania", "program": "PhD, Learning Sciences and Technologies (LST)", "match": "Pennsylvania|North Carolina State", "status": "none" },
+    { "name": "Seiji Isotani", "school": "University of Pennsylvania", "program": "PhD, Learning Sciences and Technologies (LST)", "match": "Pennsylvania|Harvard|S[aã]o Paulo", "status": "none" },
+    { "name": "Amy Stornaiuolo", "school": "University of Pennsylvania", "program": "PhD, Literacy Studies", "match": "Pennsylvania", "email": "amystorn@upenn.edu", "status": "waiting",
+      "contact": "Emailed Nov 11." },
+    { "name": "Yuko Goto Butler", "school": "University of Pennsylvania", "program": "PhD, Educational Linguistics", "match": "Pennsylvania", "status": "none" },
+    { "name": "Yumi Matsumoto", "school": "University of Pennsylvania", "program": "PhD, Educational Linguistics", "match": "Pennsylvania", "status": "none" },
+
+    { "name": "Zilong Pan", "school": "Lehigh University", "program": "PhD, Teaching, Learning, and Technology", "match": "Lehigh|Texas", "status": "none" },
+    { "name": "Juan Zheng", "school": "Lehigh University", "program": "PhD, Teaching, Learning, and Technology", "match": "Lehigh|McGill", "status": "none" },
+    { "name": "Shan Li", "school": "Lehigh University", "program": "PhD, Teaching, Learning, and Technology", "match": "Lehigh|McGill", "status": "none" },
+
+    { "name": "Suriati Abas", "school": "Rutgers University–New Brunswick", "program": "PhD in Education, LCID", "match": "Rutgers", "email": "suriati.abas@rutgers.edu", "status": "waiting",
+      "contact": "Emailed Nov 11." },
+    { "name": "Janice D. Gobert", "school": "Rutgers University–New Brunswick", "program": "PhD in Education, LCID (Learning Sciences)", "match": "Rutgers|Worcester", "status": "none" },
+
+    { "name": "Xinying Hou", "school": "NJIT", "program": "PhD, Data Science", "match": "New Jersey Institute|Michigan", "status": "none" },
+    { "name": "Bruce D. Homer", "school": "CUNY Graduate Center", "program": "PhD, Educational Psychology", "match": "City University of New York|CUNY|Graduate Center", "status": "none" },
+    { "name": "Su-Je Cho", "school": "Fordham University", "program": "PhD, Innovation in Curriculum and Instruction", "match": "Fordham", "email": "scho@fordham.edu", "status": "replied",
+      "contact": "Nov 4: very positive reply. Your interests align with her ongoing work and she's open to you contributing to her research." },
+    { "name": "Laura Zieger", "school": "Kean University", "program": "EdD, Educational Technology Leadership", "match": "Kean|New Jersey City", "email": "laura.zieger@kean.edu", "status": "replied",
+      "contact": "Kind, encouraging reply. Looped in Dr. Christopher Shamburg; you replied to both on Nov 11." },
+    { "name": "Christopher Shamburg", "school": "Kean University", "program": "EdD, Educational Technology Leadership", "match": "Kean|New Jersey City", "email": "christopher.shamburg@kean.edu", "status": "replied",
+      "contact": "Added to your thread with Dr. Zieger (Nov 11)." }
+  ]
+}

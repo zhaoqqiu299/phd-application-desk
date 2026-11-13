@@ -1,0 +1,12 @@
+{
+  "_help": "Facts pinned to the Overview page. Edit freely.",
+  "recommenders": ["Gregory Wilson", "Kazuya Saito", "Dora Demszky"],
+  "keyFacts": [
+    { "school": "New York University", "date": "2026-11-11", "level": "bad",
+      "text": "NYU Steinhardt allows only ONE application per term. Choose one program (ECT, Teaching & Learning, or Applied Linguistics)." },
+    { "school": "University of Pennsylvania", "date": "2026-11-12", "level": "warn",
+      "text": "Bodong Chen only admits through LST, not TLTE. Penn also asks for different recommenders if you apply to two programs." },
+    { "school": "New York University", "date": "2026-11-11", "level": "warn",
+      "text": "Sarah Beck doesn't expect to take a student this cycle (Teaching & Learning)." }
+  ]
+}
