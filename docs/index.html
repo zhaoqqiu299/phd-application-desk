@@ -191,6 +191,34 @@ aside.drawer.open { transform: none }
 .ctx { font-size: 12px; color: var(--accent); padding: 0 16px 8px }
 form.ask { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line) }
 form.ask textarea { resize: none; height: 42px }
+/* Requirements */
+table.req { border-collapse: separate; border-spacing: 0; font-size: 13px; min-width: 1500px; width: 100% }
+table.req th, table.req td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; max-width: 260px }
+table.req th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 500; position: sticky; top: 0; background: var(--surface) }
+table.req td:first-child, table.req th:first-child { position: sticky; left: 0; background: var(--surface); min-width: 200px; box-shadow: 1px 0 0 var(--line) }
+table.req tr:last-child td { border-bottom: 0 }
+table.req .one { color: var(--bad); font-weight: 500 }
+table.req .src a { display: block; font-size: 11px; overflow-wrap: anywhere }
+/* Documents */
+.doc { display: grid; gap: 10px; padding: 14px 16px }
+.doc-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline }
+.doc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px }
+.doc-grid label { display: grid; gap: 3px; font-size: 12px; color: var(--muted) }
+.doc-grid .wide { grid-column: 1 / -1 }
+.limit { font-size: 12px; color: var(--muted); max-width: 80ch }
+.wc { font-family: var(--mono); font-size: 12px }
+.wc.over { color: var(--bad); font-weight: 500 }
+/* Outreach + fit */
+.olog { border-bottom: 1px solid var(--line) }
+.olog:last-child { border-bottom: 0 }
+.olog summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 10px 16px; cursor: pointer; list-style: none }
+.olog summary::-webkit-details-marker { display: none }
+.olog .meta { font-size: 12px; color: var(--muted) }
+.timeline { display: grid; gap: 8px; padding: 0 16px 12px 28px; border-left: 2px solid var(--line); margin-left: 16px }
+.tl { font-size: 13px } .tl .d { font-family: var(--mono); font-size: 12px; color: var(--muted) }
+.tl .dir { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; font-weight: 500 }
+.tl .dir.sent { color: var(--muted) } .tl .dir.received { color: var(--ok) }
+.fit-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 85ch }
 .flash { padding: 10px 16px; background: var(--accent-soft); color: var(--accent); font-size: 13px; border-radius: 8px }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important } }
 </style>
@@ -205,7 +233,9 @@ form.ask textarea { resize: none; height: 42px }
   <nav class="tabs" aria-label="Pages">
     <a href="#overview" data-tab="overview">Overview</a>
     <a href="#programs" data-tab="programs">Programs</a>
+    <a href="#requirements" data-tab="requirements">Requirements</a>
     <a href="#faculty" data-tab="faculty">Faculty</a>
+    <a href="#documents" data-tab="documents">Documents</a>
     <a href="#todo" data-tab="todo">To-do<span class="count" id="todoCount" hidden></span></a>
     <a href="#diary" data-tab="diary">Diary</a>
     <a href="#email" data-tab="email">Email<span class="count" id="mailCount" hidden></span></a>
@@ -259,6 +289,20 @@ form.ask textarea { resize: none; height: 42px }
     </section>
   </main>
 
+  <!-- REQUIREMENTS -->
+  <main id="view-requirements" class="view" hidden style="display:grid;gap:14px">
+    <div class="alert warn panel" style="border-radius:10px"><div><div><b>Check each item on the official page before you rely on it.</b> Gathered from search results of official university pages on <span id="reqChecked"></span>; the pages themselves couldn't be opened. Source links are in each row.</div></div></div>
+    <div class="chips" id="reqFilter"></div>
+    <section class="panel"><div class="tablewrap" id="reqTable"></div></section>
+  </main>
+
+  <!-- DOCUMENTS -->
+  <main id="view-documents" class="view" hidden style="display:grid;gap:14px">
+    <div class="stats" id="docStats"></div>
+    <p class="note" style="margin:0">One card per program. Changes save automatically in this browser (and are included in Export).</p>
+    <div id="docList" style="display:grid;gap:12px"></div>
+  </main>
+
   <!-- FACULTY LIST -->
   <main id="view-faculty" class="view" hidden style="display:grid;gap:20px">
     <div class="note">Click a faculty member to see their recent papers, research directions and collaborators. Publication data comes from OpenAlex and is cached in your browser for a week.</div>
@@ -310,6 +354,10 @@ form.ask textarea { resize: none; height: 42px }
         <div id="needsReply"></div>
       </section>
     </div>
+    <section class="panel">
+      <div class="panel-head"><h2>Outreach log</h2><span class="note" id="outreachNote"></span></div>
+      <div id="outreachLog"></div>
+    </section>
     <p class="note" id="statusUpdated"></p>
   </main>
 </div>
@@ -355,6 +403,9 @@ const API_BASE = "";
 let mode = "server";
 let programs = [], todos = store.get("phd-todos"), diary = store.get("phd-diary");
 let letters = null, emails = null, faculty = [], profile = { recommenders: [], keyFacts: [] };
+let requirements = null, outreach = [], docs = store.get("phd-docs", {});
+const outreachFor = (f) => outreach.find((c) => (f.email && norm(c.email) === norm(f.email)) || norm(c.name) === norm(f.name));
+const reqFor = (school) => (requirements?.programs || []).filter((r) => norm(r.school) === norm(school));
 
 async function api(path, opts = {}) {
   const r = await fetch(API_BASE + path, { ...opts, headers: { "Content-Type": "application/json", ...(opts.headers || {}) } });
@@ -508,7 +559,7 @@ $("list").addEventListener("click", (e) => {
 
 // import / export
 $("exportBtn").onclick = () => {
-  const blob = new Blob([JSON.stringify({ programs, todos, diary }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ programs, todos, diary, docs, fitNotes: Object.fromEntries(Object.keys(localStorage).filter((k) => k.startsWith("phd-fit-")).map((k) => [k.slice(8), store.get(k, "")])) }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "phd-desk-backup.json"; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
@@ -521,6 +572,8 @@ $("importFile").onchange = async (e) => {
     const mergeById = (mine, theirs) => { const ids = new Set(mine.map((x) => x.id)); const add = (Array.isArray(theirs) ? theirs : []).filter((x) => x && x.id && !ids.has(x.id)); mine.push(...add); return add.length; };
     const nt = mergeById(todos, list.todos), nd = mergeById(diary, (list.diary || []).filter((d) => d && d.date && d.text));
     if (nt) store.set("phd-todos", todos); if (nd) store.set("phd-diary", diary);
+    if (list.docs && typeof list.docs === "object") { Object.entries(list.docs).forEach(([k, v]) => { if (!docs[k]) docs[k] = v; }); saveDocs(); }
+    if (list.fitNotes && typeof list.fitNotes === "object") Object.entries(list.fitNotes).forEach(([k, v]) => { if (!store.get("phd-fit-" + k, "")) store.set("phd-fit-" + k, String(v)); });
     if (nt || nd) extra = ` Also added ${nt} to-do${nt === 1 ? "" : "s"} and ${nd} diary entr${nd === 1 ? "y" : "ies"}.`;
     list = Array.isArray(list.programs) ? list.programs : [];
   }
@@ -681,6 +734,15 @@ async function renderPerson(s) {
       <div class="links">${f.email ? `<span>✉ <span style="user-select:all">${esc(f.email)}</span></span>` : ""}<a href="${scholar}" target="_blank" rel="noopener">Google Scholar ↗</a><span id="pOa"></span>
         <button class="link" type="button" id="pAsk" style="padding:0;color:var(--accent)">✦ Ask AI about ${esc(f.name.split(" ")[0])}'s research</button></div>
     </div></section>
+    <div class="grid2">
+      <section class="panel"><div class="panel-head"><h2>Your fit</h2><button type="button" id="pFitAI">✦ Draft with AI</button></div>
+        <div class="panel-body" style="display:grid;gap:12px">
+          ${f.fit?.length ? `<div><h3 style="margin-bottom:6px">From your outreach emails</h3><ul class="fit-list">${f.fit.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>` : `<div class="note">No fit notes yet. Click <b>Draft with AI</b> once the papers below have loaded: it matches your background to their specific papers.</div>`}
+          <label style="display:grid;gap:4px;font-size:12px;color:var(--muted)">Your notes for the SOP (saved in this browser)<textarea id="pFitNotes" rows="6" placeholder="e.g. Cite their 2025 paper on … in paragraph 3"></textarea></label>
+          <span class="note" id="pFitStatus"></span>
+        </div></section>
+      <section class="panel"><div class="panel-head"><h2>Contact timeline</h2></div><div id="pTimeline"></div></section>
+    </div>
     <div class="stats" id="pStats"></div>
     <div class="grid2">
       <section class="panel"><div class="panel-head"><h2>Research directions</h2><span class="note">From paper keywords and titles since 2016</span></div><div id="pCloud"><div class="loading">Loading papers…</div></div></section>
@@ -695,6 +757,22 @@ async function renderPerson(s) {
     <section class="panel"><div class="panel-head"><h2>Recent papers</h2><input id="pFilter" placeholder="Filter by word…" aria-label="Filter papers" style="width:min(240px,100%)"></div><div class="papers" id="pPapers"><div class="loading">Loading…</div></div></section>`;
   $("pAsk").onclick = () => openAsk();
   setAskContext(f, null, null);
+  const fitKey = "phd-fit-" + s;
+  $("pFitNotes").value = store.get(fitKey, "") || "";
+  $("pFitNotes").oninput = () => store.set(fitKey, $("pFitNotes").value);
+  const oc = outreachFor(f);
+  $("pTimeline").innerHTML = oc?.log?.length ? `<div class="timeline" style="margin-top:12px">${timelineHtml(oc.log)}</div>` : `<div class="empty">No emails with ${esc(f.name.split(" ")[0])} yet.</div>`;
+  $("pFitAI").onclick = async () => {
+    const b = $("pFitAI"); b.disabled = true; $("pFitStatus").textContent = "Drafting… (uses your background + their recent papers)";
+    try {
+      const q = `Write fit notes for my PhD application to work with ${f.name} (${f.school}, ${f.program}). Give 3-5 bullets. Each bullet connects one specific piece of my background to one of their specific recent papers or projects (name the paper title and year), then gives one sentence I could adapt for my statement of purpose. Plain text, each bullet starting with "- ". Do not invent papers: use only the titles in the context.`;
+      const { answer } = await api("/api/ask", { method: "POST", body: JSON.stringify({ history: [{ role: "user", content: q }], context: [askContext, "My background: " + (profile.background || "")].filter(Boolean).join("\n\n"), ...(mode === "local" ? { programs } : {}) }) });
+      const cur = $("pFitNotes").value.trim();
+      $("pFitNotes").value = (cur ? cur + "\n\n" : "") + `AI draft (${today()}):\n` + answer.trim();
+      store.set(fitKey, $("pFitNotes").value); $("pFitStatus").textContent = "Added below your notes. Edit freely.";
+    } catch (e) { $("pFitStatus").textContent = e.code === 404 || e.code === "no_server" ? "AI isn't connected on this site yet." : "Couldn't draft right now. Try again."; }
+    finally { b.disabled = false; }
+  };
   let a, works;
   try { a = await oaAuthor(f); } catch { a = undefined; }
   if (location.hash !== "#faculty-" + s) return;
@@ -807,11 +885,88 @@ function renderEmail() {
   }).join("");
   $("awaiting").innerHTML = emails ? rows(emails.awaitingReply, "aw") : `<div class="empty">The email agents haven't written anything yet.</div>`;
   $("needsReply").innerHTML = emails ? rows(emails.needsReply, "nr") : "";
+  renderOutreach();
   const ts = [letters?.updated, emails?.updated].filter(Boolean).sort().pop();
   $("statusUpdated").textContent = ts ? "Last checked by the email agents: " + new Date(ts).toLocaleString() : "";
   const n = (emails?.awaitingReply?.length || 0) + (emails?.needsReply?.length || 0);
   $("mailCount").hidden = !n; $("mailCount").textContent = n;
 }
+
+// ================= outreach log =================
+function timelineHtml(log) {
+  return [...log].sort((a, b) => a.date.localeCompare(b.date)).map((m) => `<div class="tl"><span class="d">${esc(fmtDate(m.date))}</span> <span class="dir ${esc(m.dir)}">${m.dir === "received" ? "← reply" : "→ you"}</span>
+    <div><b>${esc(m.subject)}</b></div>${m.summary ? `<div class="note" style="font-size:13px">${esc(m.summary)}</div>` : ""}${/^https:\/\/outlook\.(office365|office)\.com\//.test(m.webLink || "") ? `<a href="${esc(m.webLink)}" target="_blank" rel="noopener" style="font-size:12px">Open in Outlook</a>` : ""}</div>`).join("");
+}
+function renderOutreach() {
+  if (!outreach.length) { $("outreachLog").innerHTML = `<div class="empty">No outreach recorded yet.</div>`; return; }
+  const rows = outreach.map((c) => { const log = [...(c.log || [])].sort((a, b) => a.date.localeCompare(b.date)); return { c, log, first: log[0], last: log[log.length - 1], replied: log.some((m) => m.dir === "received") }; })
+    .sort((a, b) => (b.last?.date || "").localeCompare(a.last?.date || ""));
+  $("outreachNote").textContent = `${rows.length} contacts · ${rows.filter((r) => r.replied).length} replied`;
+  $("outreachLog").innerHTML = rows.map(({ c, log, first, last, replied }) => {
+    const f = faculty.find((x) => (x.email && norm(x.email) === norm(c.email)) || norm(x.name) === norm(c.name));
+    const waitDays = last?.dir === "sent" ? -daysLeft(last.date) + 1 : null;
+    return `<details class="olog"><summary>
+      <span><b>${f ? `<a href="#faculty-${slug(f.name)}">${esc(c.name)}</a>` : esc(c.name)}</b> <span class="note">· ${esc(shortSchool(c.school))}</span></span>
+      <span>${replied ? `<span class="pill st-replied">Replied</span>` : `<span class="pill st-waiting">No reply${waitDays ? " · " + waitDays + "d" : ""}</span>`}</span>
+      <span class="meta">First: ${esc(fmtDate(first?.date))} · Last: ${esc(fmtDate(last?.date))} ${last?.dir === "received" ? "(their reply)" : "(you)"} · ${log.length} message${log.length > 1 ? "s" : ""}</span>
+    </summary><div class="timeline">${timelineHtml(log)}</div></details>`;
+  }).join("");
+}
+
+// ================= requirements =================
+let reqSchool = "";
+function renderRequirements() {
+  const list = requirements?.programs || [];
+  $("reqChecked").textContent = requirements?.checked ? fmtDate(requirements.checked, { month: "long", day: "numeric", year: "numeric" }) : "";
+  const schools = [...new Set(list.map((r) => r.school))];
+  $("reqFilter").innerHTML = [`<button type="button" class="chip ${!reqSchool ? "done" : ""}" data-req="">All schools</button>`, ...schools.map((s) => `<button type="button" class="chip ${reqSchool === s ? "done" : ""}" data-req="${esc(s)}">${esc(shortSchool(s))}</button>`)].join("");
+  const rows = list.filter((r) => !reqSchool || r.school === reqSchool);
+  const cols = [["deadline", "Deadline"], ["fee", "Fee"], ["feeWaiver", "Fee waiver"], ["gre", "GRE"], ["englishTest", "English test"], ["sop", "Statement"], ["writingSample", "Writing sample"], ["letters", "Letters"], ["funding", "Funding"], ["cohort", "Size / notes"], ["oneApp", "Application limits"]];
+  $("reqTable").innerHTML = rows.length ? `<table class="req"><thead><tr><th>Program</th>${cols.map(([, l]) => `<th>${l}</th>`).join("")}<th>Sources</th></tr></thead><tbody>${rows.map((r) => `<tr>
+    <td><b>${esc(shortSchool(r.school))}</b><div class="note" style="font-size:13px">${esc(r.program)}</div></td>
+    ${cols.map(([k]) => `<td class="${k === "oneApp" && /only one/i.test(r[k] || "") ? "one" : ""}">${esc(r[k] || "—")}</td>`).join("")}
+    <td class="src">${(r.sources || []).map((u, i) => /^https:\/\//.test(u) ? `<a href="${esc(u)}" target="_blank" rel="noopener">Source ${i + 1} ↗</a>` : "").join("")}</td></tr>`).join("")}</tbody></table>` : `<div class="empty">Loading…</div>`;
+}
+$("reqFilter").addEventListener("click", (e) => { const b = e.target.closest("[data-req]"); if (b) { reqSchool = b.dataset.req; renderRequirements(); } });
+
+// ================= documents (SOP versions) =================
+const DOC_STATUS = ["Not started", "Outline", "Drafting", "With reviewer", "Revising", "Final", "Uploaded"];
+const saveDocs = () => store.set("phd-docs", docs);
+function renderDocuments() {
+  const list = [...programs].sort((a, b) => (a.deadline || "9999").localeCompare(b.deadline || "9999"));
+  const st = (p) => docs[p.id]?.status || "Not started";
+  $("docStats").innerHTML = [["Final", "Final or uploaded", (s) => ["Final", "Uploaded"].includes(s)], ["", "In progress", (s) => ["Outline", "Drafting", "With reviewer", "Revising"].includes(s)], ["", "Not started", (s) => s === "Not started"]]
+    .map(([, l, fn]) => `<div class="stat"><b>${list.filter((p) => fn(st(p))).length}</b><span>${l}</span></div>`).join("");
+  if (!list.length) { $("docList").innerHTML = `<div class="panel empty">Add programs first, then track each statement here.</div>`; return; }
+  $("docList").innerHTML = list.map((p) => {
+    const d = docs[p.id] || {};
+    const req = reqFor(p.school);
+    const limitTxt = req.map((r) => `${r.program}: ${r.sop}${r.writingSample && !/not stated/i.test(r.writingSample) ? " · Writing sample: " + r.writingSample : ""}`).join("\n");
+    const words = (d.words || "").toString();
+    const lim = req.map((r) => +(String(r.sop).match(/(\d[\d,]*)\s*words/i)?.[1] || "").replace(/,/g, "")).find((n) => n > 0);
+    return `<section class="panel doc" data-doc="${p.id}">
+      <div class="doc-head"><div><b style="font-size:15px">${esc(p.school)}</b> <span class="note">${esc(p.program)}</span></div>
+        <span class="pill ${["Final", "Uploaded"].includes(st(p)) ? "st-taking" : st(p) === "Not started" ? "st-none" : "st-waiting"}">${esc(st(p))}</span></div>
+      ${limitTxt ? `<div class="limit" style="white-space:pre-line">${esc(limitTxt)}</div>` : ""}
+      <div class="doc-grid">
+        <label>Status<select data-k="status">${DOC_STATUS.map((s) => `<option ${s === st(p) ? "selected" : ""}>${s}</option>`).join("")}</select></label>
+        <label>Version / base draft<input data-k="version" value="${esc(d.version)}" placeholder="e.g. v3 · learning-analytics angle"></label>
+        <label>Draft #<input data-k="draft" type="number" min="0" value="${esc(d.draft)}"></label>
+        <label>Word count <span class="wc ${lim && +words > lim ? "over" : ""}">${lim ? `(limit ${lim})` : ""}</span><input data-k="words" type="number" min="0" value="${esc(words)}"></label>
+        <label>Reviewed by<input data-k="reviewers" value="${esc(d.reviewers)}" placeholder="e.g. Karin (Nov 20), Writing Center"></label>
+        <label>Faculty named<input data-k="faculty" value="${esc(d.faculty ?? facultyAt(p.school).filter((f) => f.status !== "not-taking").map((f) => f.name).slice(0, 3).join(", "))}"></label>
+        <label class="wide">Draft link<input data-k="link" type="url" value="${esc(d.link)}" placeholder="https://docs.google.com/…"></label>
+        <label class="wide">Notes<textarea data-k="notes" rows="2" placeholder="What to change next">${esc(d.notes)}</textarea></label>
+      </div>
+      ${/^https?:\/\//.test(d.link || "") ? `<a href="${esc(d.link)}" target="_blank" rel="noopener" style="font-size:13px">Open draft ↗</a>` : ""}
+    </section>`;
+  }).join("");
+}
+$("docList").addEventListener("change", (e) => {
+  const el = e.target.closest("[data-k]"), card = e.target.closest("[data-doc]"); if (!el || !card) return;
+  const id = card.dataset.doc; docs[id] = { ...(docs[id] || {}), [el.dataset.k]: el.value, updated: Date.now() }; saveDocs();
+  if (["status", "words", "link"].includes(el.dataset.k)) renderDocuments();
+});
 
 // ================= Ask drawer =================
 let history = [], askContext = null;
@@ -840,7 +995,9 @@ async function ask(q) {
   history.push({ role: "user", content: q });
   const bot = addMsg("bot", "Thinking…"); $("askBtn").disabled = true;
   const facSummary = faculty.map((f) => `${f.name} (${f.school}): ${FAC_STATUS[f.status]}${f.contact ? " — " + f.contact : ""}`).join("\n");
-  const ctx = [askContext, "All faculty contacts:\n" + facSummary].filter(Boolean).join("\n\n");
+  const outSummary = outreach.map((c) => { const lg = [...(c.log || [])].sort((a, b) => a.date.localeCompare(b.date)); const last = lg[lg.length - 1]; return `${c.name} (${c.school}): ${lg.length} messages, last ${last?.date} ${last?.dir === "received" ? "from them" : "from you"}${last?.summary ? " — " + last.summary : ""}`; }).join("\n");
+  const reqSummary = (requirements?.programs || []).map((r) => `${r.school} — ${r.program}: deadline ${r.deadline}; fee ${r.fee}; GRE ${r.gre}; English ${r.englishTest}; statement ${r.sop}; writing sample ${r.writingSample}; letters ${r.letters}; funding ${r.funding}; limits ${r.oneApp}`).join("\n");
+  const ctx = [askContext, "All faculty contacts:\n" + facSummary, "Email outreach log:\n" + outSummary, "Admissions requirements (from official pages, unverified):\n" + reqSummary, profile.background ? "Applicant background: " + profile.background : ""].filter(Boolean).join("\n\n").slice(0, 16000);
   try {
     const body = { history, todos: todos.filter((t) => !t.done), context: ctx };
     if (mode === "local") body.programs = programs;
@@ -861,15 +1018,17 @@ setSugg(DEFAULT_SUGG);
 function route() {
   const h = location.hash.slice(1) || "overview";
   const person = h.startsWith("faculty-") ? h.slice(8) : null;
-  const v = person ? "person" : ["overview", "programs", "faculty", "todo", "diary", "email"].includes(h) ? h : "overview";
+  const v = person ? "person" : ["overview", "programs", "requirements", "faculty", "documents", "todo", "diary", "email"].includes(h) ? h : "overview";
   document.querySelectorAll(".view").forEach((el) => { el.hidden = el.id !== "view-" + v; });
   document.querySelectorAll("nav.tabs a").forEach((a) => a.setAttribute("aria-current", a.dataset.tab === (person ? "faculty" : v) ? "page" : "false"));
   if (person) renderPerson(person); else setAskContext(null);
   if (v === "faculty") renderFacultyList();
+  if (v === "requirements") renderRequirements();
+  if (v === "documents") renderDocuments();
   if (person || v !== "overview") scrollTo({ top: 0 });
 }
 function renderAll() {
-  renderOverview(); renderPrograms(); renderTodos(); renderEmail();
+  renderOverview(); renderPrograms(); renderTodos(); renderEmail(); renderDocuments();
   if (!$("view-faculty").hidden) renderFacultyList();
 }
 window.addEventListener("hashchange", route);
@@ -877,8 +1036,8 @@ window.addEventListener("hashchange", route);
 // ================= boot =================
 (async () => {
   resetDiaryForm(); renderDiary(); renderAll(); route();
-  const [l, em, fac, prof] = await Promise.all([getJson("data/letters.json"), getJson("data/emails.json"), getJson("data/faculty.json"), getJson("data/profile.json")]);
-  letters = l; emails = em; faculty = fac?.faculty || []; if (prof) profile = prof;
+  const [l, em, fac, prof, rq, out] = await Promise.all(["letters", "emails", "faculty", "profile", "requirements", "outreach"].map((n) => getJson(`data/${n}.json`)));
+  letters = l; emails = em; faculty = fac?.faculty || []; if (prof) profile = prof; requirements = rq; outreach = out?.contacts || [];
   try { programs = await api("/api/programs"); mode = "server"; }
   catch { mode = "local"; programs = store.get("phd-programs"); }
   if (applyLetterCounts()) persist(); else renderAll();

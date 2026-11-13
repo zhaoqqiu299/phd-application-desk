@@ -1,12 +1,23 @@
 {
-  "_help": "Facts pinned to the Overview page. Edit freely.",
+  "_help": "Facts pinned to the Overview page, plus your background (used by 'Draft fit note with AI'). Edit freely.",
   "recommenders": ["Gregory Wilson", "Kazuya Saito", "Dora Demszky"],
+  "background": "M.S. in Learning, Design and Technology at Stanford GSE (in progress); M.A. in Applied Linguistics (Distinction), UCL; four years teaching English (high school and college) in China, where I used AI-assisted essay scoring and saw AI widen gaps between students. Built Knowledge Echoes, a teacher-in-the-loop dashboard that highlights growth across students' writing. At Stanford: Math Out Loud with Prof. Dora Demszky, coding how multilingual elementary students engage with peers' mathematical ideas across 415 classroom observations and comparing human vs LLM coding (78% of coder disagreements were about referencing vs extending a peer's idea); building a platform with Dr. Karin Forssell (feedback-paths.vercel.app) that tracks how second-language writers accept, question, adapt or reject AI feedback and how they revise; AI Tinkery mentor with Gregory Wilson. Interests: human–human and human–AI interaction in learning, collaborative learning analytics, AI feedback and writing, epistemic agency, equitable participation, teacher-facing analytics.",
   "keyFacts": [
     { "school": "New York University", "date": "2026-11-11", "level": "bad",
       "text": "NYU Steinhardt allows only ONE application per term. Choose one program (ECT, Teaching & Learning, or Applied Linguistics)." },
-    { "school": "University of Pennsylvania", "date": "2026-11-12", "level": "warn",
-      "text": "Bodong Chen only admits through LST, not TLTE. Penn also asks for different recommenders if you apply to two programs." },
-    { "school": "New York University", "date": "2026-11-11", "level": "warn",
+    { "school": "Teachers College, Columbia University", "date": "2026-11-13", "level": "bad",
+      "text": "TC allows only one active application per cycle. Choose between the PhD in Technology, Media and Learning and the EdD in Applied Linguistics. For Waring, pick the \"language use\" track." },
+    { "school": "University of Pennsylvania", "date": "2026-11-17", "level": "warn",
+      "text": "Penn GSE virtual doctoral open house Tue Nov 17, 7:30pm ET (4:30pm PT), with Literacy Studies and Learning Sciences breakout rooms. Amy Stornaiuolo recommends it." },
+    { "school": "University of Pennsylvania", "date": "2026-11-13", "level": "warn",
+      "text": "Penn: Bodong Chen admits only through LST. Literacy Studies admits 1-2 per year; Amy suggests also naming Gerald Campano. Two Penn applications need different recommenders." },
+    { "school": "New York University", "date": "2026-11-13", "level": "warn",
+      "text": "NYU's English-test exemption needs 4 years of US/English-only study, so your Stanford MS and UCL MA likely don't exempt you. Plan to send TOEFL/IELTS/Duolingo (successful applicants typically score ~100 iBT). TC, Penn and CUNY appear to accept your UCL MA as an exemption. Verify." },
+    { "school": "Lehigh University", "date": "2026-11-13", "level": "warn",
+      "text": "Lehigh TLT: Dec 1 is the spring-start deadline and Apr 1 is for fall, but you must apply by Dec 1 to be considered for funding. Keep Dec 1." },
+    { "school": "Rutgers University–New Brunswick", "date": "2026-11-11", "level": "info",
+      "text": "Confirm your Rutgers specialization: your email to Dr. Abas says Literacy Education, but your program list says LCID / Learning Sciences." },
+    { "school": "New York University", "date": "2026-11-11", "level": "info",
       "text": "Sarah Beck doesn't expect to take a student this cycle (Teaching & Learning)." }
   ]
 }
