@@ -1,6 +1,6 @@
 {
   "_help": "Every outreach thread with faculty and admissions offices. The daily email agent appends new messages here. dir: sent | received.",
-  "updated": "2026-11-14T07:30:29Z",
+  "updated": "2026-11-14T08:29:49Z",
   "contacts": [
     { "name": "Xavier Ochoa", "email": "xavier.ochoa@nyu.edu", "school": "New York University", "log": [
       { "date": "2026-11-03", "dir": "sent", "subject": "Prospective PhD Student – Learning Analytics and AI-Supported Feedback", "summary": "First outreach with CV (a second copy went to a mistyped address)." },
