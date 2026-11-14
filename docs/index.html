@@ -1184,7 +1184,12 @@ window.addEventListener("hashchange", route);
   setTimeout(() => faculty.filter((f) => f._custom && f.program === "Looking up…").forEach((f) => enrichFaculty(f._key)), 0); // finish lookups interrupted by a reload
   if (prof) profile = prof; requirements = rq; outreach = out?.contacts || [];
   try { programs = await api("/api/programs"); mode = "server"; }
-  catch { mode = "local"; programs = store.get("phd-programs"); }
+  catch {
+    mode = "local"; programs = store.get("phd-programs");
+    // A browser that has never saved a list (new device, incognito, cleared data) starts from the shared list.
+    let never = false; try { never = localStorage.getItem("phd-programs") === null; } catch { never = true; }
+    if (never) { const seed = await getJson("data/programs.json"); if (seed?.programs?.length) { programs = seed.programs; store.set("phd-programs", programs); } }
+  }
   if (applyLetterCounts()) persist(); else renderAll();
   route();
 })();

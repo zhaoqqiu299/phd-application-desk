@@ -1,0 +1,104 @@
+{
+  "_help": "Starting program list. A browser with no saved list of its own loads this. Edits you make on the site stay in that browser.",
+  "programs": [
+    {
+      "school": "New York University",
+      "program": "PhD in Educational Communication and Technology (+2 more)",
+      "deadline": "2026-12-01",
+      "status": "Drafting",
+      "fee": 0,
+      "portal": "https://steinhardt.nyu.edu/degree/phd-educational-communication-and-technology/how-apply",
+      "lors": 0,
+      "notes": "PhD in Educational Communication and Technology(Xavier Ochoa📮) 研究 Multimodal Learning Analytics、AI、协作学习和反馈系统。其研究组已有博士生xiaomeng huang📮(meeting on Nov 5) 在研究 AI-mediated collaboration、共同知识建构及协作技能评估。与你现在做的数学小组讨论 engagement coding 研究非常接近。\nPhD in Applied Linguistics and Multilingual Education (Kongji Qin, Lorena Llosa)\nPhD in Teaching and Learning (Sarah W. Beck📮)\n推荐信: 已发送请求",
+      "id": "seed-1"
+    },
+    {
+      "school": "Teachers College, Columbia University",
+      "program": "PhD in Technology, Media and Learning (+1 more)",
+      "deadline": "2026-12-01",
+      "status": "Drafting",
+      "fee": 0,
+      "portal": "https://www.tc.columbia.edu/admission/how-to-apply/application-deadlines/",
+      "lors": 0,
+      "notes": "PhD in Technology, Media and Learning\nEdD in Applied Linguistics (Language & Technology specialization) (Waring Zhang📮)\n推荐信: 已发送请求",
+      "id": "seed-2"
+    },
+    {
+      "school": "University of Pennsylvania",
+      "program": "PhD in Learning Sciences and Technologies (+3 more)",
+      "deadline": "2026-12-01",
+      "status": "Drafting",
+      "fee": 0,
+      "portal": "https://www.gse.upenn.edu/academics/learning-sciences-and-technologies-phd",
+      "lors": 0,
+      "notes": "PhD in Learning Sciences and Technologies (Bodong Chen, Shiyan Jiang)/teaching and learning, Ph.D\nPhD in Educational Linguistics(Yuko Goto Butler, Yumi Matsumoto)\nSeiji Isotani、\n💗Literacy Studies, Ph.D. Amy Stornaiuolo\n推荐信: 已发送请求",
+      "id": "seed-3"
+    },
+    {
+      "school": "Lehigh University",
+      "program": "PhD in Teaching, Learning, and Technology",
+      "deadline": "2026-12-01",
+      "status": "Drafting",
+      "fee": 0,
+      "portal": "https://ed.lehigh.edu/academics/doctoral-degrees/phd-teaching-learning-and-technology",
+      "lors": 0,
+      "notes": "PhD in Teaching, Learning, and Technology（Zilong Pan, Juan Zheng）Lehigh University — Shan Li 他的研究直接涉及 AI in Education、Learning Analytics、机器学习、学生 engagement 和 self-regulated learning。对应的 Teaching, Learning and Technology PhD 值得重点研究。\n推荐信: 已发送请求",
+      "id": "seed-4"
+    },
+    {
+      "school": "Rutgers University–New Brunswick",
+      "program": "PhD in Education, LCID Concentration – Learning Sciences specialization OR PhD in Education, LCID Concentration – Language Education specialization",
+      "deadline": "2026-12-01",
+      "status": "Drafting",
+      "fee": 0,
+      "portal": "https://gse.rutgers.edu/degree/phd-lcid-specialization-in-learning-sciences/",
+      "lors": 0,
+      "notes": "PhD in Education, LCID Concentration – Learning Sciences specialization OR PhD in Education, LCID Concentration – Language Education specialization（Janice D. Gobert）\n推荐信: 已发送请求",
+      "id": "seed-5"
+    },
+    {
+      "school": "NJIT",
+      "program": "Ph.D. in Data Science NJIT — Xinying Hou (+1 more)",
+      "deadline": "2026-12-15",
+      "status": "Researching",
+      "fee": 0,
+      "portal": "",
+      "lors": 0,
+      "notes": "Ph.D. in Data Science NJIT — Xinying Hou\n她是 NJIT Data Science 系的助理教授，研究主题直接就是 AI in Education、学习科学、人本设计与 AI 支持的个性化学习、评估。这是典型的项目名称不叫教育技术、但导师研究非常匹配的例子。\n推荐信: 未请求",
+      "id": "seed-6"
+    },
+    {
+      "school": "CUNY Graduate Center",
+      "program": "PhD Educational Psychology",
+      "deadline": "2026-12-15",
+      "status": "Researching",
+      "fee": 0,
+      "portal": "https://www.gc.cuny.edu/educational-psychology/admissions-and-aid",
+      "lors": 0,
+      "notes": "PhD Educational Psychology (Bruce Homer) 游戏学习、技术支持的学习、教育心理学他的研究主要考察儿童和青少年如何通过数字技术学习，包括教育游戏、模拟环境、学习动机、认知能力，以及数字技术对社会认知和协作行为的影响。他也研究语言、读写能力和认知发展\n推荐信: 未请求",
+      "id": "seed-7"
+    },
+    {
+      "school": "Fordham University",
+      "program": "Ph.D. in Innovation in Curriculum and Instruction",
+      "deadline": "2027-05-15",
+      "status": "Researching",
+      "fee": 0,
+      "portal": "https://www.fordham.edu/graduate-school-of-education/academics/degree-and-certificate-programs/become-a-teacher/doctorate-in-innovation-in-curriculum-and-instruction/curriculum-and-instruction-application-requirements/",
+      "lors": 0,
+      "notes": "Ph.D. in Innovation in Curriculum and Instruction （Su-Je Cho📮 very positive feedback 💗）\n推荐信: 未请求",
+      "id": "seed-8"
+    },
+    {
+      "school": "Kean University",
+      "program": "Educational Technology Leadership, Ed.D.",
+      "deadline": "2027-05-08",
+      "status": "Researching",
+      "fee": 0,
+      "portal": "https://www.kean.edu/academics/programs/educational-technology-leadership-edd",
+      "lors": 0,
+      "notes": "Educational Technology Leadership, Ed.D. （Dr. Zieger📮）\n推荐信: 未请求",
+      "id": "seed-9"
+    }
+  ]
+}
