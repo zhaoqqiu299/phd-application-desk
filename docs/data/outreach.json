@@ -1,6 +1,6 @@
 {
   "_help": "Every outreach thread with faculty and admissions offices. The daily email agent appends new messages here. dir: sent | received.",
-  "updated": "2026-11-13T23:30:00Z",
+  "updated": "2026-11-14T00:30:43Z",
   "contacts": [
     { "name": "Xavier Ochoa", "email": "xavier.ochoa@nyu.edu", "school": "New York University", "log": [
       { "date": "2026-11-03", "dir": "sent", "subject": "Prospective PhD Student – Learning Analytics and AI-Supported Feedback", "summary": "First outreach with CV (a second copy went to a mistyped address)." },
@@ -51,6 +51,10 @@
     { "name": "Christopher Shamburg", "email": "christopher.shamburg@kean.edu", "school": "Kean University", "log": [
       { "date": "2026-11-11", "dir": "sent", "subject": "Re: Prospective Ed.D. Applicant – Teacher-in-the-Loop AI Feedback", "summary": "Joined via Dr. Zieger's thread." } ] },
     { "name": "Ben James", "email": "benjames@udel.edu", "school": "University of Delaware (not on your list)", "log": [
-      { "date": "2026-11-02", "dir": "sent", "subject": "Prospective PhD Student – Multilingual Learners and Teacher Noticing", "summary": "Cited his work with Bunch and Lang (2025)." } ] }
+      { "date": "2026-11-02", "dir": "sent", "subject": "Prospective PhD Student – Multilingual Learners and Teacher Noticing", "summary": "Cited his work with Bunch and Lang (2025)." } ] },
+    { "name": "Hari Subramonyam", "email": "harihars@stanford.edu", "school": "Stanford University (not on your list)", "log": [
+      { "date": "2026-11-11", "dir": "sent", "subject": "Human–AI Interaction and Learning Research Assistant Inquiry", "summary": "RA inquiry citing his 'Desiderata for AI Tutors as Knowledge-Building Partners'; described the L2-writer AI feedback platform and Math Out Loud; asked about current or upcoming RA openings and a brief chat; CV attached.", "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADNlZTYxMjMwLTRmN2ItNGRjMC05MTE0LTY2YzQyZjczMDc1ZABGAAAAAACaUSYRLnTqRKTjNn7964aiBwB6tPAeoFTnSouRXVsb12E3AAAAAAEJAAB6tPAeoFTnSouRXVsb12E3AACMkbmfAAA%3D&exvsurl=1&viewmodel=ReadMessageItem" } ] },
+    { "name": "Antero Garcia", "email": "Antero.Garcia@stanford.edu", "school": "Stanford University (not on your list)", "log": [
+      { "date": "2026-11-13", "dir": "sent", "subject": "Research Assistant Inquiry (AI, Literacy, and Writing Education)", "summary": "RA inquiry citing his work on Generative AI and the (Re)turn to Luddism and Argument as Architecture; described Knowledge Echoes and the L2-writer AI feedback project; asked for any RA opportunity; CV attached.", "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADNlZTYxMjMwLTRmN2ItNGRjMC05MTE0LTY2YzQyZjczMDc1ZABGAAAAAACaUSYRLnTqRKTjNn7964aiBwB6tPAeoFTnSouRXVsb12E3AAAAAAEJAAB6tPAeoFTnSouRXVsb12E3AACMkbmiAAA%3D&exvsurl=1&viewmodel=ReadMessageItem" } ] }
   ]
 }
