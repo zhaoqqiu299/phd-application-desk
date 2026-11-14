@@ -691,6 +691,64 @@ function removeFaculty(key) {
   else store.set("phd-fac-hidden", [...new Set([...store.get("phd-fac-hidden"), key])]);
   mergeFaculty(); renderAll(); renderFacultyList();
 }
+// Build an affiliation regex from a school name, e.g. "University of Pennsylvania" -> /Pennsylvania/
+function schoolMatch(school) {
+  const skip = new Set(["university", "college", "of", "the", "school", "at", "and", "state", "new", "graduate", "center", "institute"]);
+  const words = String(school).split(/[\s,–\-()]+/).filter((w) => w.length > 2 && !skip.has(w.toLowerCase()));
+  const extra = { NYU: "New York", CUNY: "City University of New York|CUNY", NJIT: "New Jersey Institute", MIT: "Massachusetts Institute", UCLA: "California, Los Angeles" }[school.trim().toUpperCase()];
+  return [extra, ...words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))].filter(Boolean).join("|") || school;
+}
+function showAddFacForm(slot) {
+  $("schoolOptions").innerHTML = [...new Set([...programs.map((p) => p.school), ...faculty.map((x) => x.school)])].map((s) => `<option value="${esc(s)}">`).join("");
+  slot.innerHTML = `<form class="edit" id="facAddForm" style="border-radius:8px">
+    <label>Name<input id="fa-name" required placeholder="e.g. Gerald Campano"></label>
+    <label>School<input id="fa-school" required list="schoolOptions" placeholder="Pick or type"></label>
+    <div class="wide note" style="color:var(--muted)">Papers, topics and affiliation come from OpenAlex; the program and fit notes are drafted by AI from their papers and your background. You can edit anything afterwards.</div>
+    <div class="actions"><button type="button" id="fa-cancel">Cancel</button><button class="primary" type="submit">Add and look up</button></div>
+  </form>`;
+  $("fa-name").focus();
+  $("fa-cancel").onclick = () => { slot.innerHTML = ""; };
+  $("facAddForm").onsubmit = (e) => {
+    e.preventDefault();
+    const name = $("fa-name").value.trim(), school = $("fa-school").value.trim();
+    if (faculty.some((x) => slug(x.name) === slug(name))) { flash(`${name} is already in your list.`); return; }
+    const key = "c" + Date.now();
+    store.set("phd-fac-custom", [...store.get("phd-fac-custom"), { _key: key, name, school, program: "Looking up…", status: "none", match: schoolMatch(school) }]);
+    slot.innerHTML = ""; mergeFaculty(); renderAll(); renderFacultyList();
+    flash(`Added ${name}. Looking up their papers…`);
+    enrichFaculty(key);
+  };
+}
+const updateCustom = (key, patch) => { store.set("phd-fac-custom", store.get("phd-fac-custom").map((x) => x._key === key ? { ...x, ...patch } : x)); mergeFaculty(); };
+async function enrichFaculty(key) {
+  let f = faculty.find((x) => x._key === key); if (!f) return;
+  const refresh = () => { renderAll(); if (!$("view-faculty").hidden) renderFacultyList(); if (location.hash === "#faculty-" + slug(f.name)) renderPerson(slug(f.name)); };
+  let a = null, works = [];
+  try { try { localStorage.removeItem("oa-a2-" + slug(f.name)); } catch {} a = await oaAuthor(f); } catch {}
+  if (!a) { updateCustom(key, { program: "" }); refresh(); flash(`Couldn't find ${f.name} on OpenAlex. Check the spelling, or add their OpenAlex ID with Edit.`); return; }
+  updateCustom(key, { openalex: a.id, ...(a.unverified ? { contact: `OpenAlex match not confirmed at ${f.school} (found: ${a.inst.join(", ") || "no affiliation"}). Check their papers.` } : {}) });
+  try { works = await oaWorks(a.id); } catch {}
+  f = faculty.find((x) => x._key === key); refresh();
+  const titles = works.slice(0, 20).map((w) => `- (${w.y}) ${w.t}${w.v ? " — " + w.v : ""}`).join("\n");
+  const q = `Return ONLY a JSON object, no other text: {"program": "...", "summary": "...", "fit": ["...", "...", "..."]}.
+"program": the doctoral program or department at ${f.school} this person most likely advises in, based on their research (e.g. "PhD, Learning Sciences and Technologies"); end with " (AI guess)".
+"summary": one sentence on their current research direction.
+"fit": 3 short bullets, each linking one specific part of my background to one of their papers listed below (name the paper and year). Use only titles listed below.
+Person: ${f.name}, ${f.school}. OpenAlex affiliation: ${a.inst.join(", ")}. Topics: ${a.topics.map((t) => t.n).join("; ")}.
+Recent papers:
+${titles || "(none found)"}
+My background: ${profile.background || ""}`;
+  try {
+    const { answer } = await api("/api/ask", { method: "POST", body: JSON.stringify({ history: [{ role: "user", content: q }], ...(mode === "local" ? { programs } : {}) }) });
+    const j = JSON.parse(answer.slice(answer.indexOf("{"), answer.lastIndexOf("}") + 1));
+    updateCustom(key, { program: String(j.program || "").slice(0, 160), contact: [f.contact, j.summary ? "Research: " + String(j.summary).slice(0, 400) : ""].filter(Boolean).join(" "), fit: Array.isArray(j.fit) ? j.fit.slice(0, 5).map((x) => String(x).slice(0, 400)) : [] });
+    flash(`Filled in ${f.name}: program, research summary and fit notes. Check and edit as needed.`);
+  } catch {
+    updateCustom(key, { program: f.program === "Looking up…" ? "" : f.program });
+    flash(`Found ${f.name}'s papers, but the AI couldn't draft the program and fit notes right now. You can add them with Edit.`);
+  }
+  refresh();
+}
 function showFacForm(f, slot) {
   const isNew = !f; f = f || { status: "none" };
   $("schoolOptions").innerHTML = [...new Set([...programs.map((p) => p.school), ...faculty.map((x) => x.school)])].map((s) => `<option value="${esc(s)}">`).join("");
@@ -722,7 +780,7 @@ function showFacForm(f, slot) {
     if (location.hash.startsWith("#faculty-")) { location.hash = "#faculty-" + slug(data.name); renderPerson(slug(data.name)); } else renderFacultyList();
   };
 }
-$("facAddBtn").onclick = () => showFacForm(null, $("facFormSlot"));
+$("facAddBtn").onclick = () => showAddFacForm($("facFormSlot"));
 $("facList").addEventListener("click", (e) => {
   const b = e.target.closest("[data-rmfac]"); if (!b) return;
   e.preventDefault();
@@ -1122,7 +1180,9 @@ window.addEventListener("hashchange", route);
 (async () => {
   resetDiaryForm(); renderDiary(); renderAll(); route();
   const [l, em, fac, prof, rq, out] = await Promise.all(["letters", "emails", "faculty", "profile", "requirements", "outreach"].map((n) => getJson(`data/${n}.json`)));
-  letters = l; emails = em; baseFaculty = fac?.faculty || []; mergeFaculty(); if (prof) profile = prof; requirements = rq; outreach = out?.contacts || [];
+  letters = l; emails = em; baseFaculty = fac?.faculty || []; mergeFaculty();
+  setTimeout(() => faculty.filter((f) => f._custom && f.program === "Looking up…").forEach((f) => enrichFaculty(f._key)), 0); // finish lookups interrupted by a reload
+  if (prof) profile = prof; requirements = rq; outreach = out?.contacts || [];
   try { programs = await api("/api/programs"); mode = "server"; }
   catch { mode = "local"; programs = store.get("phd-programs"); }
   if (applyLetterCounts()) persist(); else renderAll();
