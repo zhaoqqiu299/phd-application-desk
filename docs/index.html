@@ -110,6 +110,10 @@ form.edit .wide { grid-column: 1 / -1 }
 .fac-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px }
 .fac-card { display: grid; gap: 6px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; text-decoration: none; color: inherit; align-content: start }
 .fac-card:hover { border-color: var(--accent) }
+.fac-wrap { position: relative; display: grid }
+.fac-x { position: absolute; top: 8px; right: 8px; border: 0; background: none; color: var(--muted); padding: 2px 6px; font-size: 13px; border-radius: 6px }
+.fac-x:hover { color: var(--bad); background: var(--bad-soft) }
+.fac-x.armed { color: var(--bad); background: var(--bad-soft); font-weight: 500 }
 .fac-card .n { font-weight: 600; font-size: 15px }
 .fac-card .p { font-size: 13px; color: var(--muted) }
 .fac-card .topics { font-size: 12px; color: var(--muted); min-height: 18px }
@@ -305,8 +309,14 @@ table.req .src a { display: block; font-size: 11px; overflow-wrap: anywhere }
 
   <!-- FACULTY LIST -->
   <main id="view-faculty" class="view" hidden style="display:grid;gap:20px">
-    <div class="note">Click a faculty member to see their recent papers, research directions and collaborators. Publication data comes from OpenAlex and is cached in your browser for a week.</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="note" style="max-width:70ch">Click a faculty member to see their recent papers, research directions and collaborators. Publication data comes from OpenAlex and is cached in your browser for a week.</div>
+      <button class="primary" type="button" id="facAddBtn">+ Add professor</button>
+    </div>
+    <div id="facFormSlot"></div>
+    <div class="note" id="facHiddenNote"></div>
     <div id="facList"></div>
+    <datalist id="schoolOptions"></datalist>
   </main>
 
   <!-- FACULTY DETAIL -->
@@ -559,7 +569,7 @@ $("list").addEventListener("click", (e) => {
 
 // import / export
 $("exportBtn").onclick = () => {
-  const blob = new Blob([JSON.stringify({ programs, todos, diary, docs, fitNotes: Object.fromEntries(Object.keys(localStorage).filter((k) => k.startsWith("phd-fit-")).map((k) => [k.slice(8), store.get(k, "")])) }, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ programs, todos, diary, docs, facultyChanges: { custom: store.get("phd-fac-custom"), hidden: store.get("phd-fac-hidden"), edits: store.get("phd-fac-edits", {}) }, fitNotes: Object.fromEntries(Object.keys(localStorage).filter((k) => k.startsWith("phd-fit-")).map((k) => [k.slice(8), store.get(k, "")])) }, null, 2)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "phd-desk-backup.json"; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
@@ -573,6 +583,14 @@ $("importFile").onchange = async (e) => {
     const nt = mergeById(todos, list.todos), nd = mergeById(diary, (list.diary || []).filter((d) => d && d.date && d.text));
     if (nt) store.set("phd-todos", todos); if (nd) store.set("phd-diary", diary);
     if (list.docs && typeof list.docs === "object") { Object.entries(list.docs).forEach(([k, v]) => { if (!docs[k]) docs[k] = v; }); saveDocs(); }
+    const fc = list.facultyChanges;
+    if (fc && typeof fc === "object") {
+      const have = new Set(store.get("phd-fac-custom").map((x) => x._key));
+      store.set("phd-fac-custom", [...store.get("phd-fac-custom"), ...(Array.isArray(fc.custom) ? fc.custom.filter((x) => x && x._key && x.name && !have.has(x._key)) : [])]);
+      store.set("phd-fac-hidden", [...new Set([...store.get("phd-fac-hidden"), ...(Array.isArray(fc.hidden) ? fc.hidden : [])])]);
+      store.set("phd-fac-edits", { ...(fc.edits && typeof fc.edits === "object" ? fc.edits : {}), ...store.get("phd-fac-edits", {}) });
+      mergeFaculty();
+    }
     if (list.fitNotes && typeof list.fitNotes === "object") Object.entries(list.fitNotes).forEach(([k, v]) => { if (!store.get("phd-fit-" + k, "")) store.set("phd-fit-" + k, String(v)); });
     if (nt || nd) extra = ` Also added ${nt} to-do${nt === 1 ? "" : "s"} and ${nd} diary entr${nd === 1 ? "y" : "ies"}.`;
     list = Array.isArray(list.programs) ? list.programs : [];
@@ -642,18 +660,76 @@ function renderFacultyList() {
   const groups = order.map((s) => [s, faculty.filter((f) => f.school === s)]).filter(([, fs]) => fs.length);
   $("facList").innerHTML = groups.map(([school, fs]) => `<section class="school-group"><h3>${esc(school)}</h3><div class="fac-grid">${fs.map((f) => {
     const s = slug(f.name), c = cacheGet("oa-a2-" + s);
-    return `<a class="fac-card" href="#faculty-${s}" data-fac="${s}">
-      <div style="display:flex;justify-content:space-between;gap:8px;align-items:start"><span class="n">${esc(f.name)}</span><span class="pill st-${esc(f.status)}">${esc(FAC_STATUS[f.status] || "")}</span></div>
+    return `<div class="fac-wrap"><a class="fac-card" href="#faculty-${s}" data-fac="${s}">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:start;padding-right:22px"><span class="n">${esc(f.name)}</span><span class="pill st-${esc(f.status)}">${esc(FAC_STATUS[f.status] || "")}</span></div>
       <div class="p">${esc(f.program)}</div>
       <div class="topics" data-topics="${s}">${c ? esc(c.topics.slice(0, 3).map((t) => t.n).join(" · ")) : ""}</div>
       <div class="nums" data-nums="${s}">${c ? `${c.works} papers · ${c.cites} citations${c.h ? " · h " + c.h : ""}` : ""}</div>
-    </a>`;
+    </a><button type="button" class="fac-x" data-rmfac="${esc(f._key)}" title="Remove ${esc(f.name)}" aria-label="Remove ${esc(f.name)}">✕</button></div>`;
   }).join("")}</div></section>`).join("");
+  const nh = store.get("phd-fac-hidden").length;
+  $("facHiddenNote").innerHTML = nh ? `${nh} professor${nh > 1 ? "s" : ""} removed. <button class="link" type="button" id="facRestore" style="color:var(--accent);padding:0">Restore</button>` : "";
+  if (nh) $("facRestore").onclick = () => { store.set("phd-fac-hidden", []); mergeFaculty(); renderAll(); renderFacultyList(); flash("Restored removed professors."); };
   // fill topics in the background, 3 at a time
   const queue = faculty.filter((f) => !cacheGet("oa-a2-" + slug(f.name)));
   const worker = async () => { while (queue.length) { const f = queue.shift(); try { const c = await oaAuthor(f); const s = slug(f.name); const t = document.querySelector(`[data-topics="${s}"]`), n = document.querySelector(`[data-nums="${s}"]`); if (c && t) { t.textContent = c.topics.slice(0, 3).map((x) => x.n).join(" · "); n.textContent = `${c.works} papers · ${c.cites} citations${c.h ? " · h " + c.h : ""}`; } } catch {} } };
   worker(); worker(); worker();
 }
+
+// ================= add / edit / remove faculty (saved in this browser) =================
+// Base list comes from data/faculty.json (kept up to date by the email agent);
+// your additions, edits and removals are layered on top and never overwritten by it.
+let baseFaculty = [];
+function mergeFaculty() {
+  const hidden = new Set(store.get("phd-fac-hidden")), edits = store.get("phd-fac-edits", {}), custom = store.get("phd-fac-custom");
+  faculty = [...baseFaculty.map((f) => ({ ...f, _key: slug(f.name) })), ...custom.map((f) => ({ ...f, _custom: true }))]
+    .filter((f) => !hidden.has(f._key)).map((f) => edits[f._key] ? { ...f, ...edits[f._key] } : f);
+}
+function removeFaculty(key) {
+  const custom = store.get("phd-fac-custom");
+  if (custom.some((f) => f._key === key)) store.set("phd-fac-custom", custom.filter((f) => f._key !== key));
+  else store.set("phd-fac-hidden", [...new Set([...store.get("phd-fac-hidden"), key])]);
+  mergeFaculty(); renderAll(); renderFacultyList();
+}
+function showFacForm(f, slot) {
+  const isNew = !f; f = f || { status: "none" };
+  $("schoolOptions").innerHTML = [...new Set([...programs.map((p) => p.school), ...faculty.map((x) => x.school)])].map((s) => `<option value="${esc(s)}">`).join("");
+  slot.innerHTML = `<form class="edit" id="facForm" style="border-radius:8px;margin-top:8px">
+    <label>Name<input id="ff-name" required value="${esc(f.name)}" placeholder="e.g. Gerald Campano"></label>
+    <label>School<input id="ff-school" required list="schoolOptions" value="${esc(f.school)}" placeholder="Pick or type"></label>
+    <label>Program<input id="ff-program" value="${esc(f.program)}" placeholder="e.g. PhD, Literacy Studies"></label>
+    <label>Email<input id="ff-email" type="email" value="${esc(f.email)}"></label>
+    <label>Status<select id="ff-status">${Object.entries(FAC_STATUS).map(([k, l]) => `<option value="${k}" ${k === f.status ? "selected" : ""}>${l}</option>`).join("")}</select></label>
+    <label>OpenAlex ID (optional)<input id="ff-oa" value="${esc(f.openalex)}" placeholder="A5012345678 — pins the right person"></label>
+    <label class="wide">Contact notes<textarea id="ff-contact" rows="2" placeholder="What they said, when you emailed">${esc(f.contact)}</textarea></label>
+    <label class="wide">Fit notes (one per line)<textarea id="ff-fit" rows="3" placeholder="How your work connects to theirs">${esc((f.fit || []).join("\n"))}</textarea></label>
+    <div class="actions"><button type="button" id="ff-cancel">Cancel</button><button class="primary" type="submit">${isNew ? "Add professor" : "Save changes"}</button></div>
+  </form>`;
+  $("ff-name").focus();
+  $("ff-cancel").onclick = () => { slot.innerHTML = ""; };
+  $("facForm").onsubmit = (e) => {
+    e.preventDefault();
+    const data = { name: $("ff-name").value.trim(), school: $("ff-school").value.trim(), program: $("ff-program").value.trim(), email: $("ff-email").value.trim(),
+      status: $("ff-status").value, openalex: $("ff-oa").value.trim(), contact: $("ff-contact").value.trim(), fit: $("ff-fit").value.split("\n").map((x) => x.trim()).filter(Boolean) };
+    if (!data.openalex) delete data.openalex;
+    if (faculty.some((x) => slug(x.name) === slug(data.name) && x._key !== f._key)) { flash(`${data.name} is already in your list.`); return; }
+    if (isNew) store.set("phd-fac-custom", [...store.get("phd-fac-custom"), { ...data, match: "", _key: "c" + Date.now() }]);
+    else if (f._custom) store.set("phd-fac-custom", store.get("phd-fac-custom").map((x) => x._key === f._key ? { ...x, ...data } : x));
+    else { const ed = store.get("phd-fac-edits", {}); ed[f._key] = data; store.set("phd-fac-edits", ed); }
+    if (data.openalex !== f.openalex || data.name !== f.name) { try { localStorage.removeItem("oa-a2-" + slug(data.name)); } catch {} }
+    slot.innerHTML = ""; mergeFaculty(); renderAll();
+    flash(isNew ? `Added ${data.name}.` : `Saved ${data.name}.`);
+    if (location.hash.startsWith("#faculty-")) { location.hash = "#faculty-" + slug(data.name); renderPerson(slug(data.name)); } else renderFacultyList();
+  };
+}
+$("facAddBtn").onclick = () => showFacForm(null, $("facFormSlot"));
+$("facList").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-rmfac]"); if (!b) return;
+  e.preventDefault();
+  if (b.dataset.confirm) { const f = faculty.find((x) => x._key === b.dataset.rmfac); removeFaculty(b.dataset.rmfac); flash(`Removed ${f?.name || "professor"}. Use Restore above to undo.`); return; }
+  b.dataset.confirm = "1"; b.textContent = "Remove?"; b.classList.add("armed");
+  setTimeout(() => { if (b.isConnected) { delete b.dataset.confirm; b.textContent = "✕"; b.classList.remove("armed"); } }, 3000);
+});
 
 // ================= faculty detail =================
 const STOP = new Set("a an the of and or for to in on at by with from as is are be via its their our using use used based toward towards into through between among within across how what why when do does can study studies analysis approach new learning education educational student students case research".split(" "));
@@ -729,7 +805,9 @@ async function renderPerson(s) {
   v.innerHTML = `<a class="back" href="#faculty">← All faculty</a>
     <section class="panel"><div class="panel-body" style="display:grid;gap:12px">
       <div class="fac-head"><div class="who"><h2 style="font-size:26px">${esc(f.name)}</h2><div class="note" style="font-size:14px">${esc(f.school)} · ${esc(f.program)}</div><div class="note" id="pAff"></div></div>
-        <span class="pill st-${esc(f.status)}" style="font-size:13px">${esc(FAC_STATUS[f.status] || "")}</span></div>
+        <div style="display:grid;gap:6px;justify-items:end"><span class="pill st-${esc(f.status)}" style="font-size:13px">${esc(FAC_STATUS[f.status] || "")}</span>
+        <span><button class="link" type="button" id="pEdit">Edit</button><button class="link" type="button" id="pRemove">Remove</button></span></div></div>
+      <div id="pEditSlot"></div>
       ${f.contact || mail.length ? `<div class="contact-box">${f.contact ? `<div>${esc(f.contact)}</div>` : ""}${mail.map((m) => `<div style="margin-top:4px"><b>${esc(m.kind)}:</b> "${esc(m.subject)}" · ${esc(m.days)}d${m.why ? " · " + esc(m.why) : ""}</div>`).join("")}</div>` : ""}
       <div class="links">${f.email ? `<span>✉ <span style="user-select:all">${esc(f.email)}</span></span>` : ""}<a href="${scholar}" target="_blank" rel="noopener">Google Scholar ↗</a><span id="pOa"></span>
         <button class="link" type="button" id="pAsk" style="padding:0;color:var(--accent)">✦ Ask AI about ${esc(f.name.split(" ")[0])}'s research</button></div>
@@ -756,6 +834,13 @@ async function renderPerson(s) {
     </div>
     <section class="panel"><div class="panel-head"><h2>Recent papers</h2><input id="pFilter" placeholder="Filter by word…" aria-label="Filter papers" style="width:min(240px,100%)"></div><div class="papers" id="pPapers"><div class="loading">Loading…</div></div></section>`;
   $("pAsk").onclick = () => openAsk();
+  $("pEdit").onclick = () => showFacForm(f, $("pEditSlot"));
+  $("pRemove").onclick = (e) => {
+    const b = e.currentTarget;
+    if (b.dataset.confirm) { removeFaculty(f._key); location.hash = "#faculty"; flash(`Removed ${f.name}.`); return; }
+    b.dataset.confirm = "1"; b.textContent = "Confirm remove"; b.style.color = "var(--bad)";
+    setTimeout(() => { if (b.isConnected) { delete b.dataset.confirm; b.textContent = "Remove"; b.style.color = ""; } }, 3000);
+  };
   setAskContext(f, null, null);
   const fitKey = "phd-fit-" + s;
   $("pFitNotes").value = store.get(fitKey, "") || "";
@@ -1037,7 +1122,7 @@ window.addEventListener("hashchange", route);
 (async () => {
   resetDiaryForm(); renderDiary(); renderAll(); route();
   const [l, em, fac, prof, rq, out] = await Promise.all(["letters", "emails", "faculty", "profile", "requirements", "outreach"].map((n) => getJson(`data/${n}.json`)));
-  letters = l; emails = em; faculty = fac?.faculty || []; if (prof) profile = prof; requirements = rq; outreach = out?.contacts || [];
+  letters = l; emails = em; baseFaculty = fac?.faculty || []; mergeFaculty(); if (prof) profile = prof; requirements = rq; outreach = out?.contacts || [];
   try { programs = await api("/api/programs"); mode = "server"; }
   catch { mode = "local"; programs = store.get("phd-programs"); }
   if (applyLetterCounts()) persist(); else renderAll();
