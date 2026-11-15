@@ -1,0 +1,118 @@
+{
+  "_help": "Program-specific RESEARCH INTERESTS lines for the CV. The tailored PDFs themselves are not stored here (the CV has your phone number and this repo is public).",
+  "original": "Multilingual learners; human–AI interaction in education; L2 learners’ engagement with AI writing feedback; design of pedagogical AI for learning; LLM-based learning analytics; collaborative learning; classroom discourse",
+  "versions": [
+    {
+      "file": "NYU_ECT",
+      "school": "New York University",
+      "program": "PhD, Educational Communication and Technology",
+      "faculty": "Xavier Ochoa",
+      "text": "Collaborative learning analytics; multimodal and LLM-based learning analytics; human–AI interaction in education; AI-supported feedback; classroom discourse; teacher-facing analytics; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_NYU_ECT.pdf"
+    },
+    {
+      "file": "NYU_Teaching_Learning",
+      "school": "New York University",
+      "program": "PhD, Teaching and Learning (English Education)",
+      "faculty": "Sarah W. Beck",
+      "text": "Writing assessment and feedback; L2 writers’ engagement with AI writing feedback; student agency in writing; human–AI interaction in English education; dialogue in the classroom; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_NYU_Teaching_Learning.pdf"
+    },
+    {
+      "file": "NYU_Applied_Linguistics",
+      "school": "New York University",
+      "program": "PhD, Applied Linguistics and Multilingual Education",
+      "faculty": "Kongji Qin, Lorena Llosa",
+      "text": "Second language writing; L2 learners’ engagement with AI writing feedback; language assessment and technology; multilingual learners; classroom discourse; human–AI interaction in language learning",
+      "pdf": "Qiuqiu_Zhao_CV_NYU_Applied_Linguistics.pdf"
+    },
+    {
+      "file": "TC_Technology_Media_Learning",
+      "school": "Teachers College, Columbia University",
+      "program": "PhD, Technology, Media and Learning",
+      "faculty": "Paulo Blikstein",
+      "text": "Human–AI interaction in learning; design of pedagogical AI; multimodal and LLM-based learning analytics; collaborative learning; teacher-in-the-loop tools; learner agency; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_TC_Technology_Media_Learning.pdf"
+    },
+    {
+      "file": "TC_EdD_Applied_Linguistics",
+      "school": "Teachers College, Columbia University",
+      "program": "EdD, Applied Linguistics (language use)",
+      "faculty": "Hansun Zhang Waring",
+      "text": "Language use and conversation analysis; learner–AI interaction in L2 writing; L2 learners’ engagement with AI writing feedback; classroom discourse; multilingual learners; language teacher education",
+      "pdf": "Qiuqiu_Zhao_CV_TC_EdD_Applied_Linguistics.pdf"
+    },
+    {
+      "file": "Penn_LST",
+      "school": "University of Pennsylvania",
+      "program": "PhD, Learning Sciences and Technologies",
+      "faculty": "Bodong Chen",
+      "text": "Collaborative knowledge building; LLM-based learning analytics; collaborative discourse; human–AI interaction and learner agency; design of pedagogical AI; equitable participation; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_Penn_LST.pdf"
+    },
+    {
+      "file": "Penn_Literacy_Studies",
+      "school": "University of Pennsylvania",
+      "program": "PhD, Literacy Studies",
+      "faculty": "Amy Stornaiuolo, Gerald Campano",
+      "text": "AI-mediated writing and authorship; L2 writers’ engagement with AI writing feedback; critical AI literacy; writer agency; multilingual learners and literacy; classroom discourse",
+      "pdf": "Qiuqiu_Zhao_CV_Penn_Literacy_Studies.pdf"
+    },
+    {
+      "file": "Lehigh_TLT",
+      "school": "Lehigh University",
+      "program": "PhD, Teaching, Learning, and Technology",
+      "faculty": "Zilong Pan, Juan Zheng, Shan Li",
+      "text": "AI-supported scaffolding and self-regulated learning; LLM-based learning analytics; human–AI collaborative learning; learner engagement with AI feedback; equitable participation; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_Lehigh_TLT.pdf"
+    },
+    {
+      "file": "Rutgers_Literacy_Education",
+      "school": "Rutgers University–New Brunswick",
+      "program": "PhD in Education, Literacy Education",
+      "faculty": "Suriati Abas",
+      "text": "Critical AI literacy; AI-mediated writing; L2 writers’ engagement with AI writing feedback; multimodal literacy; learner agency; equity in literacy instruction; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_Rutgers_Literacy_Education.pdf"
+    },
+    {
+      "file": "Rutgers_LCID_Learning_Sciences",
+      "school": "Rutgers University–New Brunswick",
+      "program": "PhD in Education, LCID (Learning Sciences)",
+      "faculty": "Janice D. Gobert",
+      "text": "Learning sciences; LLM-based learning analytics; AI-supported assessment of learning; human–AI interaction in education; collaborative learning; classroom discourse; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_Rutgers_LCID_Learning_Sciences.pdf"
+    },
+    {
+      "file": "NJIT_Data_Science",
+      "school": "NJIT",
+      "program": "PhD, Data Science",
+      "faculty": "Xinying Hou",
+      "text": "LLM-based learning analytics; human–AI interaction in education; AI for personalized learning and assessment; educational NLP; collaborative learning; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_NJIT_Data_Science.pdf"
+    },
+    {
+      "file": "CUNY_Educational_Psychology",
+      "school": "CUNY Graduate Center",
+      "program": "PhD, Educational Psychology",
+      "faculty": "Bruce D. Homer",
+      "text": "Technology-supported learning; learner engagement and motivation with AI feedback; human–AI interaction; collaborative learning and social interaction; learning analytics; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_CUNY_Educational_Psychology.pdf"
+    },
+    {
+      "file": "Fordham_ICI",
+      "school": "Fordham University",
+      "program": "PhD, Innovation in Curriculum and Instruction",
+      "faculty": "Su-Je Cho",
+      "text": "Generative AI and inclusive writing instruction; L2 writers’ engagement with AI writing feedback; curriculum and instructional design with AI; teacher-in-the-loop tools; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_Fordham_ICI.pdf"
+    },
+    {
+      "file": "Kean_EdD_ETL",
+      "school": "Kean University",
+      "program": "EdD, Educational Technology Leadership",
+      "faculty": "Laura Zieger, Christopher Shamburg",
+      "text": "Generative AI in teaching and assessment; teacher-in-the-loop AI feedback; educational technology leadership; L2 learners’ engagement with AI writing feedback; multilingual learners",
+      "pdf": "Qiuqiu_Zhao_CV_Kean_EdD_ETL.pdf"
+    }
+  ]
+}

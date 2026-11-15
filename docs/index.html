@@ -209,6 +209,11 @@ table.req .src a { display: block; font-size: 11px; overflow-wrap: anywhere }
 .doc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px }
 .doc-grid label { display: grid; gap: 3px; font-size: 12px; color: var(--muted) }
 .doc-grid .wide { grid-column: 1 / -1 }
+.cvbox { border: 1px dashed var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 8px; background: var(--bg) }
+.cvv { display: grid; gap: 2px }
+.cvv button { justify-self: start }
+.cvtext { font-size: 13px; max-width: 95ch }
+code { font-family: var(--mono); font-size: 11px }
 .limit { font-size: 12px; color: var(--muted); max-width: 80ch }
 .wc { font-family: var(--mono); font-size: 12px }
 .wc.over { color: var(--bad); font-weight: 500 }
@@ -413,7 +418,7 @@ const API_BASE = "";
 let mode = "server";
 let programs = [], todos = store.get("phd-todos"), diary = store.get("phd-diary");
 let letters = null, emails = null, faculty = [], profile = { recommenders: [], keyFacts: [] };
-let requirements = null, outreach = [], docs = store.get("phd-docs", {});
+let requirements = null, outreach = [], docs = store.get("phd-docs", {}), cvVersions = [];
 const outreachFor = (f) => outreach.find((c) => (f.email && norm(c.email) === norm(f.email)) || norm(c.name) === norm(f.name));
 const reqFor = (school) => (requirements?.programs || []).filter((r) => norm(r.school) === norm(school));
 
@@ -1072,6 +1077,22 @@ function renderRequirements() {
 }
 $("reqFilter").addEventListener("click", (e) => { const b = e.target.closest("[data-req]"); if (b) { reqSchool = b.dataset.req; renderRequirements(); } });
 
+// ================= tailored CV research interests =================
+function cvBlock(p, d) {
+  const vs = cvVersions.filter((v) => norm(v.school) === norm(p.school));
+  if (!vs.length) return "";
+  return `<div class="wide cvbox"><div class="doc-head" style="align-items:center"><h3>CV · Research interests for this program</h3>
+      <label style="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted)">CV link<input data-k="cvlink" type="url" value="${esc(d.cvlink)}" placeholder="Paste your Drive link to the PDF" style="width:260px"></label></div>
+    ${vs.map((v) => `<div class="cvv"><div class="note">${esc(v.program)}${v.faculty ? " · tuned for " + esc(v.faculty) : ""} · file <code>${esc(v.pdf)}</code></div>
+      <div class="cvtext">${esc(v.text)}</div><button type="button" class="link" data-copycv="${esc(v.text)}" style="padding:0;color:var(--accent)">Copy</button></div>`).join("")}
+    ${/^https?:\/\//.test(d.cvlink || "") ? `<a href="${esc(d.cvlink)}" target="_blank" rel="noopener" style="font-size:13px">Open CV ↗</a>` : ""}</div>`;
+}
+document.addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-copycv]"); if (!b) return;
+  try { await navigator.clipboard.writeText(b.dataset.copycv); b.textContent = "Copied ✓"; } catch { const t = b.previousElementSibling; const r = document.createRange(); r.selectNodeContents(t); getSelection().removeAllRanges(); getSelection().addRange(r); b.textContent = "Selected, press Ctrl/Cmd+C"; }
+  setTimeout(() => { b.textContent = "Copy"; }, 2000);
+});
+
 // ================= documents (SOP versions) =================
 const DOC_STATUS = ["Not started", "Outline", "Drafting", "With reviewer", "Revising", "Final", "Uploaded"];
 const saveDocs = () => store.set("phd-docs", docs);
@@ -1099,6 +1120,7 @@ function renderDocuments() {
         <label>Reviewed by<input data-k="reviewers" value="${esc(d.reviewers)}" placeholder="e.g. Karin (Nov 20), Writing Center"></label>
         <label>Faculty named<input data-k="faculty" value="${esc(d.faculty ?? facultyAt(p.school).filter((f) => f.status !== "not-taking").map((f) => f.name).slice(0, 3).join(", "))}"></label>
         <label class="wide">Draft link<input data-k="link" type="url" value="${esc(d.link)}" placeholder="https://docs.google.com/…"></label>
+        ${cvBlock(p, d)}
         <label class="wide">Notes<textarea data-k="notes" rows="2" placeholder="What to change next">${esc(d.notes)}</textarea></label>
       </div>
       ${/^https?:\/\//.test(d.link || "") ? `<a href="${esc(d.link)}" target="_blank" rel="noopener" style="font-size:13px">Open draft ↗</a>` : ""}
@@ -1108,7 +1130,7 @@ function renderDocuments() {
 $("docList").addEventListener("change", (e) => {
   const el = e.target.closest("[data-k]"), card = e.target.closest("[data-doc]"); if (!el || !card) return;
   const id = card.dataset.doc; docs[id] = { ...(docs[id] || {}), [el.dataset.k]: el.value, updated: Date.now() }; saveDocs();
-  if (["status", "words", "link"].includes(el.dataset.k)) renderDocuments();
+  if (["status", "words", "link", "cvlink"].includes(el.dataset.k)) renderDocuments();
 });
 
 // ================= Ask drawer =================
@@ -1179,7 +1201,8 @@ window.addEventListener("hashchange", route);
 // ================= boot =================
 (async () => {
   resetDiaryForm(); renderDiary(); renderAll(); route();
-  const [l, em, fac, prof, rq, out] = await Promise.all(["letters", "emails", "faculty", "profile", "requirements", "outreach"].map((n) => getJson(`data/${n}.json`)));
+  const [l, em, fac, prof, rq, out, cvi] = await Promise.all(["letters", "emails", "faculty", "profile", "requirements", "outreach", "cv-interests"].map((n) => getJson(`data/${n}.json`)));
+  cvVersions = cvi?.versions || [];
   letters = l; emails = em; baseFaculty = fac?.faculty || []; mergeFaculty();
   setTimeout(() => faculty.filter((f) => f._custom && f.program === "Looking up…").forEach((f) => enrichFaculty(f._key)), 0); // finish lookups interrupted by a reload
   if (prof) profile = prof; requirements = rq; outreach = out?.contacts || [];
