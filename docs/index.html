@@ -227,6 +227,10 @@ code { font-family: var(--mono); font-size: 11px }
 .tl { font-size: 13px } .tl .d { font-family: var(--mono); font-size: 12px; color: var(--muted) }
 .tl .dir { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; font-weight: 500 }
 .tl .dir.sent { color: var(--muted) } .tl .dir.received { color: var(--ok) }
+.trk { font-size: 11px; font-weight: 600; border-radius: 6px; padding: 1px 7px; background: var(--accent-soft, rgba(80,120,255,.12)); color: var(--accent) }
+.trk-X { background: transparent; color: var(--muted); border: 1px solid var(--line) }
+.rp-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) }
+.rp-grid h3 { margin-bottom: 6px }
 .fit-list { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 85ch }
 .flash { padding: 10px 16px; background: var(--accent-soft); color: var(--accent); font-size: 13px; border-radius: 8px }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important } }
@@ -418,7 +422,8 @@ const API_BASE = "";
 let mode = "server";
 let programs = [], todos = store.get("phd-todos"), diary = store.get("phd-diary");
 let letters = null, emails = null, faculty = [], profile = { recommenders: [], keyFacts: [] };
-let requirements = null, outreach = [], docs = store.get("phd-docs", {}), cvVersions = [];
+let requirements = null, outreach = [], docs = store.get("phd-docs", {}), cvVersions = [], research = null;
+const researchOf = (f) => research?.people?.[f.name] || null;
 const outreachFor = (f) => outreach.find((c) => (f.email && norm(c.email) === norm(f.email)) || norm(c.name) === norm(f.name));
 const reqFor = (school) => (requirements?.programs || []).filter((r) => norm(r.school) === norm(school));
 
@@ -668,6 +673,7 @@ function renderFacultyList() {
     return `<div class="fac-wrap"><a class="fac-card" href="#faculty-${s}" data-fac="${s}">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:start;padding-right:22px"><span class="n">${esc(f.name)}</span><span class="pill st-${esc(f.status)}">${esc(FAC_STATUS[f.status] || "")}</span></div>
       <div class="p">${esc(f.program)}</div>
+      ${researchOf(f) ? `<div><span class="trk trk-${esc(researchOf(f).track)}" title="${esc(research.tracks[researchOf(f).track] || "")}">${researchOf(f).track === "X" ? "Weak fit" : "SOP " + esc(researchOf(f).track)}</span> <span class="note" style="font-size:12px">${esc(research.tracks[researchOf(f).track] || "")}</span></div>` : ""}
       <div class="topics" data-topics="${s}">${c ? esc(c.topics.slice(0, 3).map((t) => t.n).join(" · ")) : ""}</div>
       <div class="nums" data-nums="${s}">${c ? `${c.works} papers · ${c.cites} citations${c.h ? " · h " + c.h : ""}` : ""}</div>
     </a><button type="button" class="fac-x" data-rmfac="${esc(f._key)}" title="Remove ${esc(f.name)}" aria-label="Remove ${esc(f.name)}">✕</button></div>`;
@@ -875,6 +881,12 @@ async function renderPerson(s) {
       <div class="links">${f.email ? `<span>✉ <span style="user-select:all">${esc(f.email)}</span></span>` : ""}<a href="${scholar}" target="_blank" rel="noopener">Google Scholar ↗</a><span id="pOa"></span>
         <button class="link" type="button" id="pAsk" style="padding:0;color:var(--accent)">✦ Ask AI about ${esc(f.name.split(" ")[0])}'s research</button></div>
     </div></section>
+    ${(() => { const r = researchOf(f); if (!r) return ""; const li = (a) => `<ul class="fit-list">${a.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`;
+      return `<section class="panel"><div class="panel-head"><h2>Research profile</h2><span class="note"><span class="trk trk-${esc(r.track)}">${r.track === "X" ? "Weak fit" : "SOP " + esc(r.track)}</span> ${esc(research.tracks[r.track] || "")} · confidence ${esc(r.confidence)} · checked ${esc(research.checked)}</span></div>
+      <div class="panel-body" style="display:grid;gap:12px"><div class="note" style="font-size:14px">${esc(r.position)}</div>
+      <div class="rp-grid"><div><h3>What they actually study</h3>${li(r.areas)}</div><div><h3>Recent work</h3>${li(r.recent)}</div></div>
+      <div class="rp-grid"><div><h3>Who / how</h3><div class="note" style="font-size:14px"><b>Learners:</b> ${esc(r.populations)}<br><b>Methods:</b> ${esc(r.methods)}</div></div><div><h3>Links to your work</h3>${li(r.fit)}</div></div>
+      <div class="contact-box"><b>Gap to address:</b> ${esc(r.gap)}<br><b>Recruiting signal:</b> ${esc(r.signal)}</div></div></section>`; })()}
     <div class="grid2">
       <section class="panel"><div class="panel-head"><h2>Your fit</h2><button type="button" id="pFitAI">✦ Draft with AI</button></div>
         <div class="panel-body" style="display:grid;gap:12px">
@@ -1140,10 +1152,11 @@ function setSugg(list) { $("sugg").innerHTML = list.map((s) => `<button type="bu
 function setAskContext(f, a, works, col) {
   if (!f) { askContext = null; $("askCtx").hidden = true; setSugg(DEFAULT_SUGG); return; }
   const lines = [`Faculty member: ${f.name}, ${f.school}, ${f.program}. Contact status: ${FAC_STATUS[f.status]}. ${f.contact || ""}`];
+  const r = researchOf(f); if (r) lines.push(`Verified research profile (${research.checked}): ${r.position} Areas: ${r.areas.join("; ")}. Learners: ${r.populations}. Methods: ${r.methods}. Recent: ${r.recent.join("; ")}. Gap vs applicant: ${r.gap} Recruiting: ${r.signal}`);
   if (a) lines.push(`OpenAlex: ${a.works} papers, ${a.cites} citations, h-index ${a.h}. Main topics: ${a.topics.map((t) => t.n).join("; ")}.`);
   if (works) lines.push("Recent papers:\n" + works.slice(0, 25).map((w) => `- (${w.y}) ${w.t}${w.v ? " — " + w.v : ""}`).join("\n"));
   if (col) lines.push("Frequent co-authors: " + col.list.slice(0, 10).map((p) => `${p.n} (${p.c}, ${p.home})`).join("; "));
-  askContext = lines.join("\n").slice(0, 6000);
+  askContext = lines.join("\n").slice(0, 8000);
   $("askCtx").hidden = false; $("askCtx").textContent = `Context: ${f.name}'s profile and recent papers`;
   const first = f.name.split(" ")[0];
   setSugg([`Summarize ${first}'s research direction in 5 bullet points`, `How does my background fit ${first}'s work?`, `Draft a short follow-up email to ${first}`]);
@@ -1201,8 +1214,8 @@ window.addEventListener("hashchange", route);
 // ================= boot =================
 (async () => {
   resetDiaryForm(); renderDiary(); renderAll(); route();
-  const [l, em, fac, prof, rq, out, cvi] = await Promise.all(["letters", "emails", "faculty", "profile", "requirements", "outreach", "cv-interests"].map((n) => getJson(`data/${n}.json`)));
-  cvVersions = cvi?.versions || [];
+  const [l, em, fac, prof, rq, out, cvi, fr] = await Promise.all(["letters", "emails", "faculty", "profile", "requirements", "outreach", "cv-interests", "faculty-research"].map((n) => getJson(`data/${n}.json`)));
+  cvVersions = cvi?.versions || []; research = fr;
   letters = l; emails = em; baseFaculty = fac?.faculty || []; mergeFaculty();
   setTimeout(() => faculty.filter((f) => f._custom && f.program === "Looking up…").forEach((f) => enrichFaculty(f._key)), 0); // finish lookups interrupted by a reload
   if (prof) profile = prof; requirements = rq; outreach = out?.contacts || [];
