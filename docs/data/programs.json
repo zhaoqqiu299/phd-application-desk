@@ -99,6 +99,7 @@
       "lors": 0,
       "notes": "Educational Technology Leadership, Ed.D. （Dr. Zieger📮）\n推荐信: 未请求",
       "id": "seed-9"
-    }
+    },
+    {"school": "Cornell University", "program": "PhD in Information Science", "deadline": "2026-12-01", "status": "Researching", "fee": 105, "portal": "https://infosci.cornell.edu/phd-information-science/apply", "lors": 0, "notes": "导师: René Kizilcec (Future of Learning Lab; National Tutoring Observatory)。次选: Mor Naaman (Cornell Tech, AI 写作助手如何影响写作和观点), Aditya Vashistha (Global AI Initiative, AI 写作建议让非西方写作者趋同)。\n需要 personal statement + academic statement of purpose 两份文书；3 封推荐信；不接受 GRE。\n偏计算方向：文书要突出 Python 分析、embedding/聚类、平台开发。\n推荐信: 未请求", "id": "seed-cornell-is", "added": "2026-11-15"}
   ]
 }

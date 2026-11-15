@@ -55,6 +55,7 @@
       "contact": "Nov 10: kind, encouraging reply, and looped in Dr. Christopher Shamburg. You replied to both Nov 11.",
       "fit": ["Her work on generative AI in teaching and assessment ↔ your teacher-in-the-loop AI feedback (Knowledge Echoes)."] },
     { "name": "Christopher Shamburg", "school": "Kean University", "program": "EdD, Educational Technology Leadership", "match": "Kean|New Jersey City", "email": "christopher.shamburg@kean.edu", "status": "replied",
-      "contact": "Nov 15: replied as doctoral coordinator — cohort of 13–17 starting Summer 2027, some need-based scholarships and graduate assistantships, students join faculty research; invited you to book a Zoom overview (calendly.com/cshamburg-kean)." }
+      "contact": "Nov 15: replied as doctoral coordinator — cohort of 13–17 starting Summer 2027, some need-based scholarships and graduate assistantships, students join faculty research; invited you to book a Zoom overview (calendly.com/cshamburg-kean)." },
+    {"name": "René F. Kizilcec", "school": "Cornell University", "program": "PhD, Information Science", "match": "Cornell|Stanford", "status": "none", "fit": ["His National Tutoring Observatory released an AI tool that codes tutoring transcripts (Apr 2026) ↔ your human-vs-LLM coding of Math Out Loud and the strict-on-uptake / lenient-on-depth disagreement you found.", "His 'Future of Feedback' report (2026) on GenAI feedback ↔ your platform logging how L2 writers accept, question or reject AI feedback.", "His view that schools need learning-science-based tools (e.g. hint-giving HiTA), not general chatbots ↔ Knowledge Echoes and teacher-in-the-loop design."]}
   ]
 }

@@ -1224,7 +1224,13 @@ window.addEventListener("hashchange", route);
     mode = "local"; programs = store.get("phd-programs");
     // A browser that has never saved a list (new device, incognito, cleared data) starts from the shared list.
     let never = false; try { never = localStorage.getItem("phd-programs") === null; } catch { never = true; }
-    if (never) { const seed = await getJson("data/programs.json"); if (seed?.programs?.length) { programs = seed.programs; store.set("phd-programs", programs); } }
+    const seed = await getJson("data/programs.json"), seen = new Set(store.get("phd-seed-seen"));
+    if (never) { if (seed?.programs?.length) { programs = seed.programs; store.set("phd-programs", programs); } }
+    else { // programs added to the shared list later (marked "added") also appear in existing browsers, once; deleting them sticks
+      const fresh = (seed?.programs || []).filter((p) => p.added && !seen.has(p.id) && !programs.some((x) => x.id === p.id));
+      if (fresh.length) { programs = [...programs, ...fresh]; store.set("phd-programs", programs); }
+    }
+    store.set("phd-seed-seen", [...new Set([...seen, ...(seed?.programs || []).filter((p) => p.added).map((p) => p.id)])]);
   }
   if (applyLetterCounts()) persist(); else renderAll();
   route();
