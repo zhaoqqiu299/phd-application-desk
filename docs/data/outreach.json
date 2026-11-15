@@ -1,6 +1,6 @@
 {
   "_help": "Every outreach thread with faculty and admissions offices. The daily email agent appends new messages here. dir: sent | received.",
-  "updated": "2026-11-15T19:29:47Z",
+  "updated": "2026-11-15T20:29:42Z",
   "contacts": [
     { "name": "Xavier Ochoa", "email": "xavier.ochoa@nyu.edu", "school": "New York University", "log": [
       { "date": "2026-11-03", "dir": "sent", "subject": "Prospective PhD Student – Learning Analytics and AI-Supported Feedback", "summary": "First outreach with CV (a second copy went to a mistyped address)." },
@@ -50,7 +50,8 @@
       { "date": "2026-11-10", "dir": "received", "subject": "Re: Prospective Ed.D. Applicant – Teacher-in-the-Loop AI Feedback", "summary": "Kind, encouraging reply; looped in Dr. Christopher Shamburg." },
       { "date": "2026-11-11", "dir": "sent", "subject": "Re: Prospective Ed.D. Applicant – Teacher-in-the-Loop AI Feedback", "summary": "Replied to both with questions about the EdD." } ] },
     { "name": "Christopher Shamburg", "email": "christopher.shamburg@kean.edu", "school": "Kean University", "log": [
-      { "date": "2026-11-11", "dir": "sent", "subject": "Re: Prospective Ed.D. Applicant – Teacher-in-the-Loop AI Feedback", "summary": "Joined via Dr. Zieger's thread." } ] },
+      { "date": "2026-11-11", "dir": "sent", "subject": "Re: Prospective Ed.D. Applicant – Teacher-in-the-Loop AI Feedback", "summary": "Joined via Dr. Zieger's thread." },
+      {"date": "2026-11-15", "dir": "received", "subject": "Re: Prospective Ed.D. Applicant – Teacher-in-the-Loop AI Feedback", "summary": "Answered your questions inline: the Ed.D. typically admits 13–17 students and starts in Summer 2027; some need-based graduate scholarships exist (he will know more after meeting the financial aid director); graduate assistantships are available (see Kean's graduate assistantship page); Ed.D. students do join faculty-led research; he invited you to book a Zoom overview at calendly.com/cshamburg-kean.", "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADNlZTYxMjMwLTRmN2ItNGRjMC05MTE0LTY2YzQyZjczMDc1ZABGAAAAAACaUSYRLnTqRKTjNn7964aiBwB6tPAeoFTnSouRXVsb12E3AAAAAAEMAAB6tPAeoFTnSouRXVsb12E3AACPNZqMAAA%3D&exvsurl=1&viewmodel=ReadMessageItem"} ] },
     { "name": "Ben James", "email": "benjames@udel.edu", "school": "University of Delaware (not on your list)", "log": [
       { "date": "2026-11-02", "dir": "sent", "subject": "Prospective PhD Student – Multilingual Learners and Teacher Noticing", "summary": "Cited his work with Bunch and Lang (2025)." } ] },
     { "name": "Hari Subramonyam", "email": "harihars@stanford.edu", "school": "Stanford University (not on your list)", "log": [
