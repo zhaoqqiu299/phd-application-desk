@@ -28,8 +28,8 @@
     { "name": "Amy Stornaiuolo", "school": "University of Pennsylvania", "program": "PhD, Literacy Studies", "match": "Pennsylvania", "email": "amystorn@upenn.edu", "status": "replied",
       "contact": "Nov 13: Literacy Studies is open this year but admits only 1-2 students. She doesn't meet applicants individually. Consider also Dr. Gerald Campano, apply to at least one other GSE program, and attend the Nov 17 (7:30pm ET) virtual open house, which has Literacy and Learning Sciences breakout rooms. You thanked her Nov 13, registered for the open house, and said you'll also explore Learning Sciences.",
       "fit": ["Her AI-mediated writing, reimagining writing assignments, and playful experimentation with generative AI ↔ your question: how can AI-mediated writing foster engagement, critical reflection and growth as writers?", "Her Platformed Authorship project (mixed methods) ↔ your qualitative discourse coding + LLM-assisted analysis across 415 Math Out Loud observations.", "Your AI-feedback platform with Dr. Karin Forssell tracking how L2 writers accept, question or reject AI feedback."] },
-    { "name": "Gerald Campano", "school": "University of Pennsylvania", "program": "PhD, Literacy Studies", "match": "Pennsylvania", "status": "none",
-      "contact": "Suggested by Amy Stornaiuolo (Nov 13) as a second possible advisor for Literacy Studies." },
+    { "name": "Gerald Campano", "school": "University of Pennsylvania", "program": "PhD, Literacy Studies", "match": "Pennsylvania", "status": "waiting",
+      "contact": "Suggested by Amy Stornaiuolo (Nov 13) as a second possible advisor for Literacy Studies. Emailed Nov 16, no reply yet." },
     { "name": "Yuko Goto Butler", "school": "University of Pennsylvania", "program": "PhD, Educational Linguistics", "match": "Pennsylvania", "status": "none" },
     { "name": "Yumi Matsumoto", "school": "University of Pennsylvania", "program": "PhD, Educational Linguistics", "match": "Pennsylvania", "status": "none" },
 
@@ -47,7 +47,7 @@
     { "name": "Janice D. Gobert", "school": "Rutgers University–New Brunswick", "program": "PhD in Education, LCID (Learning Sciences)", "match": "Rutgers|Worcester", "status": "none" },
 
     { "name": "Xinying Hou", "school": "NJIT", "program": "PhD, Data Science", "match": "New Jersey Institute|Michigan", "status": "none" },
-    { "name": "Bruce D. Homer", "school": "CUNY Graduate Center", "program": "PhD, Educational Psychology", "match": "City University of New York|CUNY|Graduate Center", "status": "none" },
+    { "name": "Bruce D. Homer", "school": "CUNY Graduate Center", "program": "PhD, Educational Psychology", "match": "City University of New York|CUNY|Graduate Center", "status": "waiting", "contact": "Emailed Nov 16, no reply yet." },
     { "name": "Su-Je Cho", "school": "Fordham University", "program": "PhD, Innovation in Curriculum and Instruction", "match": "Fordham", "email": "scho@fordham.edu", "status": "replied",
       "contact": "Nov 4: very positive. Your interests align with her ongoing work and she welcomed you contributing to her research. You said you'll apply.",
       "fit": ["Generative AI and inclusive writing instruction (your email subject) ↔ your AI-feedback work with L2 writers and 4 years teaching English."] },
