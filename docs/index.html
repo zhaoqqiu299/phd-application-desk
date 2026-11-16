@@ -696,7 +696,16 @@ function mergeFaculty() {
   // a professor you added yourself that later appears in the shared list (e.g. found by the email agent) is shown once, from the shared list
   const last = (n) => norm(String(n).trim().split(/\s+/).pop()), same = (a, b) => last(a.name) === last(b.name) && norm(a.school) === norm(b.school);
   faculty = [...baseFaculty.map((f) => ({ ...f, _key: slug(f.name) })), ...custom.filter((c) => !baseFaculty.some((b) => same(b, c))).map((f) => ({ ...f, _custom: true }))]
-    .filter((f) => !hidden.has(f._key)).map((f) => edits[f._key] ? { ...f, ...edits[f._key] } : f);
+    .filter((f) => !hidden.has(f._key)).map((f) => edits[f._key] ? { ...f, ...liveEdit(f, edits[f._key]) } : f);
+}
+// Your edits to a shared professor never freeze the contact status: once the email agent changes
+// status/contact in the shared list, its value wins over what was saved with your edit.
+function liveEdit(base, e) {
+  const out = { ...e }; delete out._baseStatus; delete out._baseContact;
+  const legacy = !("_baseStatus" in e);
+  if (legacy ? base.status && base.status !== "none" : base.status !== e._baseStatus || (base.contact || "") !== (e._baseContact || "")) { delete out.status; if (legacy ? base.contact : true) delete out.contact; }
+  if (!out.email && base.email) delete out.email;
+  return out;
 }
 function removeFaculty(key) {
   const custom = store.get("phd-fac-custom");
@@ -786,7 +795,7 @@ function showFacForm(f, slot) {
     if (faculty.some((x) => slug(x.name) === slug(data.name) && x._key !== f._key)) { flash(`${data.name} is already in your list.`); return; }
     if (isNew) store.set("phd-fac-custom", [...store.get("phd-fac-custom"), { ...data, match: "", _key: "c" + Date.now() }]);
     else if (f._custom) store.set("phd-fac-custom", store.get("phd-fac-custom").map((x) => x._key === f._key ? { ...x, ...data } : x));
-    else { const ed = store.get("phd-fac-edits", {}); ed[f._key] = data; store.set("phd-fac-edits", ed); }
+    else { const b = baseFaculty.find((x) => slug(x.name) === f._key) || {}, ed = store.get("phd-fac-edits", {}); ed[f._key] = { ...data, _baseStatus: b.status || "", _baseContact: b.contact || "" }; store.set("phd-fac-edits", ed); }
     if (data.openalex !== f.openalex || data.name !== f.name) { try { localStorage.removeItem("oa-a2-" + slug(data.name)); } catch {} }
     slot.innerHTML = ""; mergeFaculty(); renderAll();
     flash(isNew ? `Added ${data.name}.` : `Saved ${data.name}.`);
