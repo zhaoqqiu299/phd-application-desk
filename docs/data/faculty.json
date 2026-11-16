@@ -10,7 +10,8 @@
     { "name": "Sarah W. Beck", "school": "New York University", "program": "PhD, Teaching and Learning (English Education)", "match": "New York|NYU", "email": "sarah.beck@nyu.edu", "status": "not-taking",
       "contact": "Nov 11: doesn't anticipate accepting a student this cycle, though it may change. Encouraged you to apply.",
       "fit": ["Her dialogic writing assessment and student agency (Beck & Jones, 2023, the article you shared with Karin) ↔ your Knowledge Echoes dashboard and your L2-writer AI-feedback platform.", "You taught English 4 years and used AI essay scoring, then saw AI widen gaps between students."] },
-    { "name": "Kongji Qin", "school": "New York University", "program": "PhD, Applied Linguistics and Multilingual Education", "match": "New York|NYU", "status": "none" },
+    { "name": "Kongji Qin", "school": "New York University", "program": "PhD, Applied Linguistics and Multilingual Education", "match": "New York|NYU", "status": "waiting",
+      "contact": "Emailed Nov 16. Same day got an automatic reply saying he is on medical leave, so a real answer may be slow or may not come this cycle." },
     { "name": "Lorena Llosa", "school": "New York University", "program": "PhD, Applied Linguistics and Multilingual Education", "match": "New York|NYU", "status": "none" },
 
     { "name": "Hansun Zhang Waring", "school": "Teachers College, Columbia University", "program": "EdD, Applied Linguistics (language use track)", "match": "Columbia|Teachers College", "email": "hz30@tc.columbia.edu", "status": "replied",
