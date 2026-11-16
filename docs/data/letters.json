@@ -1,15 +1,24 @@
 {
-  "updated": "2026-11-15T23:28:54Z",
+  "updated": "2026-11-16T00:24:04Z",
   "schools": {
     "New York University": [
       { "recommender": "Kazuya Saito", "date": "2026-11-10" },
       { "recommender": "Gregory Wilson", "date": "2026-11-11" }
     ],
     "Teachers College, Columbia University": [
-      { "recommender": "Kazuya Saito", "date": "2026-11-10" }
+      { "recommender": "Kazuya Saito", "date": "2026-11-10" },
+      { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" }
     ],
     "Lehigh University": [
       { "recommender": "Gregory Wilson", "date": "2026-11-11" }
+    ],
+    "University of Pennsylvania": [
+      { "recommender": "Kazuya Saito", "date": "2026-11-16", "note": "marked submitted manually" },
+      { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" }
+    ],
+    "Rutgers University–New Brunswick": [
+      { "recommender": "Kazuya Saito", "date": "2026-11-16", "note": "marked submitted manually" },
+      { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" }
     ]
   }
 }
