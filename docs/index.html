@@ -693,7 +693,9 @@ function renderFacultyList() {
 let baseFaculty = [];
 function mergeFaculty() {
   const hidden = new Set(store.get("phd-fac-hidden")), edits = store.get("phd-fac-edits", {}), custom = store.get("phd-fac-custom");
-  faculty = [...baseFaculty.map((f) => ({ ...f, _key: slug(f.name) })), ...custom.map((f) => ({ ...f, _custom: true }))]
+  // a professor you added yourself that later appears in the shared list (e.g. found by the email agent) is shown once, from the shared list
+  const last = (n) => norm(String(n).trim().split(/\s+/).pop()), same = (a, b) => last(a.name) === last(b.name) && norm(a.school) === norm(b.school);
+  faculty = [...baseFaculty.map((f) => ({ ...f, _key: slug(f.name) })), ...custom.filter((c) => !baseFaculty.some((b) => same(b, c))).map((f) => ({ ...f, _custom: true }))]
     .filter((f) => !hidden.has(f._key)).map((f) => edits[f._key] ? { ...f, ...edits[f._key] } : f);
 }
 function removeFaculty(key) {
