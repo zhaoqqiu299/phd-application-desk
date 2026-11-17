@@ -1,6 +1,6 @@
 {
   "_help": "Every outreach thread with faculty and admissions offices. The daily email agent appends new messages here. dir: sent | received.",
-  "updated": "2026-11-17T01:30:31Z",
+  "updated": "2026-11-17T02:29:37Z",
   "contacts": [
     { "name": "Xavier Ochoa", "email": "xavier.ochoa@nyu.edu", "school": "New York University", "log": [
       { "date": "2026-11-03", "dir": "sent", "subject": "Prospective PhD Student – Learning Analytics and AI-Supported Feedback", "summary": "First outreach with CV (a second copy went to a mistyped address)." },
@@ -50,7 +50,8 @@
     { "name": "Su-Je Cho", "email": "scho@fordham.edu", "school": "Fordham University", "log": [
       { "date": "2026-11-03", "dir": "sent", "subject": "Prospective PhD Student – Generative AI and Inclusive Writing Instruction", "summary": "First outreach with CV." },
       { "date": "2026-11-04", "dir": "received", "subject": "Re: Prospective PhD Student – Generative AI and Inclusive Writing Instruction", "summary": "Very positive: interests align with her ongoing work." },
-      { "date": "2026-11-04", "dir": "sent", "subject": "Re: Prospective PhD Student – Generative AI and Inclusive Writing Instruction", "summary": "Thanked her; said you'll apply and would love to contribute to her research."} ]  },
+      { "date": "2026-11-04", "dir": "sent", "subject": "Re: Prospective PhD Student – Generative AI and Inclusive Writing Instruction", "summary": "Thanked her; said you'll apply and would love to contribute to her research."},
+      { "date": "2026-11-16", "dir": "received", "subject": "Re: Prospective PhD Student – Generative AI and Inclusive Writing Instruction", "summary": "Apologized for the delay; glad you will apply for Fall 2027, but said doctoral funding is limited and competitive and she cannot confirm fully funded positions (tuition + stipend) for Fall 2027, especially for international students; suggested contacting GSE admissions about funding.", "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkADNlZTYxMjMwLTRmN2ItNGRjMC05MTE0LTY2YzQyZjczMDc1ZABGAAAAAACaUSYRLnTqRKTjNn7964aiBwB6tPAeoFTnSouRXVsb12E3AAAAAAEMAAB6tPAeoFTnSouRXVsb12E3AACPNZq8AAA%3D&exvsurl=1&viewmodel=ReadMessageItem" } ]  },
     { "name": "Laura Zieger", "email": "laura.zieger@kean.edu", "school": "Kean University", "log": [
       { "date": "2026-11-02", "dir": "sent", "subject": "Prospective Ed.D. Applicant – Teacher-in-the-Loop AI Feedback", "summary": "First outreach (to lzieger@kean.edu) with CV." },
       { "date": "2026-11-10", "dir": "received", "subject": "Re: Prospective Ed.D. Applicant – Teacher-in-the-Loop AI Feedback", "summary": "Kind, encouraging reply; looped in Dr. Christopher Shamburg." },
