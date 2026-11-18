@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T21:29:05Z",
+  "updated": "2026-11-18T22:29:06Z",
   "schools": {
     "New York University": [
       { "recommender": "Kazuya Saito", "date": "2026-11-10" },
@@ -11,7 +11,8 @@
       { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" }
     ],
     "Lehigh University": [
-      { "recommender": "Gregory Wilson", "date": "2026-11-11" }
+      { "recommender": "Gregory Wilson", "date": "2026-11-11" },
+      { "recommender": "Dora Demszky", "date": "2026-11-18" }
     ],
     "University of Pennsylvania": [
       { "recommender": "Kazuya Saito", "date": "2026-11-16", "note": "marked submitted manually" },
@@ -23,7 +24,8 @@
     ],
     "Cornell University": [
       { "recommender": "Kazuya Saito", "date": "2026-11-18" },
-      { "recommender": "Dorottya Demszky", "date": "2026-11-18" }
+      { "recommender": "Dorottya Demszky", "date": "2026-11-18" },
+      { "recommender": "Gregory Wilson", "date": "2026-11-18" }
     ]
   }
 }
