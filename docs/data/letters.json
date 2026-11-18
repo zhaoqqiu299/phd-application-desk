@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T14:29:09Z",
+  "updated": "2026-11-18T15:29:28Z",
   "schools": {
     "New York University": [
       { "recommender": "Kazuya Saito", "date": "2026-11-10" },
@@ -19,6 +19,9 @@
     "Rutgers University–New Brunswick": [
       { "recommender": "Kazuya Saito", "date": "2026-11-16", "note": "marked submitted manually" },
       { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" }
+    ],
+    "Cornell University": [
+      { "recommender": "Kazuya Saito", "date": "2026-11-18" }
     ]
   }
 }
