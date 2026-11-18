@@ -1,9 +1,10 @@
 {
-  "updated": "2026-11-18T20:28:51Z",
+  "updated": "2026-11-18T21:29:05Z",
   "schools": {
     "New York University": [
       { "recommender": "Kazuya Saito", "date": "2026-11-10" },
-      { "recommender": "Gregory Wilson", "date": "2026-11-11" }
+      { "recommender": "Gregory Wilson", "date": "2026-11-11" },
+      { "recommender": "Dora Demszky", "date": "2026-11-18" }
     ],
     "Teachers College, Columbia University": [
       { "recommender": "Kazuya Saito", "date": "2026-11-10" },
@@ -21,7 +22,8 @@
       { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" }
     ],
     "Cornell University": [
-      { "recommender": "Kazuya Saito", "date": "2026-11-18" }
+      { "recommender": "Kazuya Saito", "date": "2026-11-18" },
+      { "recommender": "Dorottya Demszky", "date": "2026-11-18" }
     ]
   }
 }
