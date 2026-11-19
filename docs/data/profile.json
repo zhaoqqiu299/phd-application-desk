@@ -1,6 +1,8 @@
 {
   "_help": "Facts pinned to the Overview page, plus your background (used by 'Draft fit note with AI'). Edit freely.",
   "recommenders": ["Gregory Wilson", "Kazuya Saito", "Dora Demszky"],
+  "lettersRequired": { "_default": 3, "Lehigh University": 2 },
+  "recommenderAliases": { "Dorottya Demszky": "Dora Demszky" },
   "background": "GRE: 336 (V+Q), Analytical Writing 3.5 (check the test date; scores are valid 5 years). M.S. in Learning, Design and Technology at Stanford GSE (in progress); M.A. in Applied Linguistics (Distinction), UCL; four years teaching English (high school and college) in China, where I used AI-assisted essay scoring and saw AI widen gaps between students. Built Knowledge Echoes, a teacher-in-the-loop dashboard that highlights growth across students' writing. At Stanford: Math Out Loud with Prof. Dora Demszky, coding how multilingual elementary students engage with peers' mathematical ideas across 415 classroom observations and comparing human vs LLM coding (78% of coder disagreements were about referencing vs extending a peer's idea); building a platform with Dr. Karin Forssell (feedback-paths.vercel.app) that tracks how second-language writers accept, question, adapt or reject AI feedback and how they revise; AI Tinkery mentor with Gregory Wilson. Interests: human–human and human–AI interaction in learning, collaborative learning analytics, AI feedback and writing, epistemic agency, equitable participation, teacher-facing analytics.",
   "keyFacts": [
     { "school": "New York University", "date": "2026-11-11", "level": "bad",

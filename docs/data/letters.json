@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-19T22:28:40Z",
+  "updated": "2026-11-20T00:00:00Z",
   "schools": {
     "New York University": [
       { "recommender": "Kazuya Saito", "date": "2026-11-10" },
@@ -8,7 +8,8 @@
     ],
     "Teachers College, Columbia University": [
       { "recommender": "Kazuya Saito", "date": "2026-11-10" },
-      { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" }
+      { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" },
+      { "recommender": "Dora Demszky", "date": "2026-11-19", "note": "marked submitted manually" }
     ],
     "Lehigh University": [
       { "recommender": "Gregory Wilson", "date": "2026-11-11" },
@@ -16,15 +17,17 @@
     ],
     "University of Pennsylvania": [
       { "recommender": "Kazuya Saito", "date": "2026-11-16", "note": "marked submitted manually" },
-      { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" }
+      { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" },
+      { "recommender": "Dora Demszky", "date": "2026-11-19", "note": "marked submitted manually" }
     ],
     "Rutgers University–New Brunswick": [
       { "recommender": "Kazuya Saito", "date": "2026-11-16", "note": "marked submitted manually" },
-      { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" }
+      { "recommender": "Gregory Wilson", "date": "2026-11-16", "note": "marked submitted manually" },
+      { "recommender": "Dora Demszky", "date": "2026-11-19", "note": "marked submitted manually" }
     ],
     "Cornell University": [
       { "recommender": "Kazuya Saito", "date": "2026-11-18" },
-      { "recommender": "Dorottya Demszky", "date": "2026-11-18" },
+      { "recommender": "Dora Demszky", "date": "2026-11-18" },
       { "recommender": "Gregory Wilson", "date": "2026-11-18" }
     ]
   }
